@@ -1,0 +1,181 @@
+快递管理系统命名规范
+版本：1.0
+更新日期：2024-03-11
+
+一、总体原则
+1. 所有命名使用英文
+2. 命名应当清晰表达其用途
+3. 避免使用缩写（除非是广泛接受的缩写）
+4. 不使用拼音或拼音缩写
+5. 命名长度应适中，既要清晰表意，又要避免过长
+
+二、文件命名规范
+1. 源文件和头文件
+   - 全部小写字母
+   - 使用下划线分隔单词
+   - 源文件使用.c后缀
+   - 头文件使用.h后缀
+   示例：
+   - user_system.h
+   - user_system.c
+   - package_handler.h
+   - package_handler.c
+
+2. 头文件保护宏
+   - 全大写字母
+   - 使用下划线分隔单词
+   - 以文件名转换而来
+   示例：
+   #ifndef USER_SYSTEM_H
+   #define USER_SYSTEM_H
+   #endif // USER_SYSTEM_H
+
+三、函数命名规范
+1. 一般函数
+   - 使用驼峰命名法
+   - 动词开头，表示操作
+   - 清晰表达功能
+   示例：
+   - initUserSystem()
+   - registerUser()
+   - loginUser()
+   - getCurrentUserId()
+
+2. 静态函数（文件内部使用）
+   - 添加static关键字
+   - 其他规则同一般函数
+   示例：
+   - static initFeedbackSystem()
+   - static saveFeedbackToFile()
+
+3. 处理函数（用户交互）
+   - 以handle开头
+   - 使用驼峰命名法（单词首字母大写,如handleUserLogin,第一个单词首字母小写）
+   示例：
+   - handleUserLogin()
+   - handleChangePassword()
+   - handleFeedback()
+
+四、变量命名规范
+1. 局部变量
+   - 使用小写字母
+   - 下划线分隔单词
+   - 名词性描述
+   示例：
+   - user_count
+   - current_user_id
+   - package_id
+
+2. 结构体成员变量
+   - 使用小写字母
+   - 下划线分隔单词
+   - 避免与结构体名重复
+   示例：
+   struct UserNode {
+       int user_id;
+       char username[MAX_USERNAME_LENGTH];
+       UserType type;
+   };
+
+3. 指针变量
+   - 命名表明是指针
+   - 使用小写字母
+   - 下划线分隔单词
+   示例：
+   - UserSystem* system
+   - UserNode* current
+   - PackageNode* head
+
+五、常量命名规范
+1. 宏定义常量
+   - 全大写字母
+   - 下划线分隔单词
+   示例：
+   - MAX_USERS
+   - MAX_USERNAME_LENGTH
+   - FEEDBACK_FILE
+
+2. const常量
+   - 全大写字母
+   - 下划线分隔单词
+   示例：
+   - const char* USER_TYPE_NAMES[]
+
+六、类型定义命名规范
+1. 结构体
+   - 首字母大写
+   - 驼峰命名法
+   - 使用直观的名词
+   示例：
+   - typedef struct UserNode
+   - typedef struct PackageSystem
+
+2. 枚举类型
+   - 首字母大写
+   - 驼峰命名法
+   示例：
+   - typedef enum UserType
+   - typedef enum PackageStatus
+
+3. 枚举值
+   - 全大写字母
+   - 下划线分隔单词
+   - 使用枚举类型名作为前缀
+   示例：
+   - USER_STUDENT
+   - USER_TEACHER
+   - PACKAGE_PENDING
+
+七、特殊命名规范
+1. 布尔变量
+   - 使用is、has、can等前缀
+   - 表示状态或条件
+   示例：
+   - is_logged_in
+   - has_permission
+   - can_access
+
+2. 计数变量
+   - 使用count、num、total等词
+   - 清晰表示计数对象
+   示例：
+   - user_count
+   - total_packages
+   - num_attempts
+
+八、禁止事项
+1. 禁止使用单字母命名（除非是临时循环变量i、j、k）
+2. 禁止使用拼音或拼音缩写
+3. 禁止使用无意义的命名（如temp1、temp2）
+4. 禁止使用系统保留关键字
+5. 禁止使用歧义命名
+
+九、示例代码
+1. 好的命名示例：
+```c
+typedef struct UserSystem {
+    UserNode* head;
+    int user_count;
+    int current_user_id;
+} UserSystem;
+
+int registerUser(UserSystem* system, const char* username, 
+                const char* password, UserType type);
+```
+
+2. 不好的命名示例：
+```c
+typedef struct Sys {    // 名称过短，不清晰
+    Node* p;           // 命名过于简单
+    int n;            // 命名不明确
+    int uid;          // 使用缩写，可读性差
+} Sys;
+
+int reg(Sys* s, char* un, char* pw, int t);  // 参数命名过于简单
+```
+
+十、维护要求
+1. 新增代码必须遵循命名规范
+2. 修改代码时同步更新相关命名
+3. 定期检查代码命名规范性
+4. 重构时优先规范命名 

@@ -329,13 +329,28 @@ void displayFeedbackList(PackageSystem* system) {
                 outputFeedbackStatus(current);
                 printf("反馈内容:\n%s\n", current->content);
                 printf("----------------------------------------\n");
-                printf("\n1. 标记为已处理\n0. 返回上一级\n请选择操作: ");
-                int status_choice = getValidatedIntegerInput(0, 1, 1);
+                printf(
+                    "\n1. 标记为待处理\n2. 标记为处理中\n3. 标记为已解决\n4. "
+                    "标记为已关闭\n0. 返回上一级\n请选择操作: ");
+                int status_choice = getValidatedIntegerInput(0, 4, 1);
 
-                if (status_choice == 1) {
-                    current->status = FEEDBACK_RESOLVED;
+                if (status_choice > 0) {
+                    switch (status_choice) {
+                        case 1:
+                            current->status = FEEDBACK_PENDING;
+                            break;
+                        case 2:
+                            current->status = FEEDBACK_PROCESSING;
+                            break;
+                        case 3:
+                            current->status = FEEDBACK_RESOLVED;
+                            break;
+                        case 4:
+                            current->status = FEEDBACK_CLOSED;
+                            break;
+                    }
                     if (saveFeedbackToFile(feedback_system)) {
-                        printf("\n反馈状态已更新为已处理\n");
+                        printf("\n反馈状态已更新\n");
                     } else {
                         printf("\n状态更新失败\n");
                     }

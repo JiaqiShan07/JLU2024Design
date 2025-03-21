@@ -7,19 +7,17 @@ int main() {
         printf("系统初始化失败\n");
         return 1;
     }
-    // 从文件加载历史数据
-    // 如果数据文件不存在，将创建新的数据文件
-    if (!loadUsersFromFile(user_system, USER_FILE)) {
-        printf("无法加载用户数据，将创建新的数据文件\n");
-    }
-    if (!loadPackagesFromFile(package_system, PACKAGE_FILE)) {
-        printf("无法加载包裹数据，将创建新的数据文件\n");
-    }
     // 主程序循环
     // should_exit为1时退出系统
     int should_exit = 0;
     while (!should_exit) {
-        // 显示登录菜单并处理用户输入
+        // 显示登录菜单并处理用户输入,并且确保每次退回到登录菜单重新加载数据
+        if (!loadUsersFromFile(user_system, USER_FILE)) {
+            printf("无法加载用户数据，将创建新的数据文件\n");
+        }
+        if (!loadPackagesFromFile(package_system, PACKAGE_FILE)) {
+            printf("无法加载包裹数据，将创建新的数据文件\n");
+        }
         displayLoginMenu();
         should_exit = handleLoginMenuInput(user_system, package_system);
     }

@@ -44,9 +44,10 @@ int loadPackagesFromFile(PackageSystem* system, const char* filename) {
             double time_diff = difftime(current_time, new_node->store_time);
             if (time_diff > STRANDED_TIME) {
                 new_node->status = STRANDED;
+                new_node->stranded_time= (int)(time_diff- STRANDED_TIME)/ ONE_DAY;
+                //滞留时间要减去滞留的基准时间
             }
         }
-
         // 将新节点添加到链表末尾
         if (system->head == NULL) {
             system->head = new_node;
@@ -134,7 +135,7 @@ int addPackage(PackageSystem* system,
         free(new_node);
         return 0;
     }
-
+    //初始化包裹的属性
     new_node->package_id = new_id;
     strncpy(new_node->username, username, MAX_USERNAME_LENGTH - 1);
     new_node->username[MAX_USERNAME_LENGTH - 1] = '\0';
@@ -146,7 +147,10 @@ int addPackage(PackageSystem* system,
     new_node->urgency = urgency;
     new_node->type = type;
     new_node->storage = storage;
-
+    new_node->stranded_time= 0;
+    new_node->shelf_number = -1;
+    new_node->layer_number = -1;
+    new_node->pickup_name[0] = '\0';
     // 使用包裹位置生成器分配货架号和层号
     int shelf_number, layer_number;
     if (!generatePackageLocation(system, &shelf_number, &layer_number)) {
@@ -202,7 +206,7 @@ void queryPackagesByUsername(PackageSystem* system, const char* username) {
     printf("包裹ID\t\t取件码\t\t\t状态\t\t更多信息\n");
     while (current != NULL) {
         if (strcmp(current->username, username) == 0) {
-            if (current->status == PENDING_PICKUP) {
+            if (current->status == PENDING_PICKUP||current->status == STRANDED) {
                 printf("%d\t\t%s\t\t%s\t\t[%d]\n", current->package_id,
                        current->pickup_code,
                        packageSatatusToString(current->status),
@@ -269,6 +273,33 @@ int pickupPackage(PackageSystem* system, int package_id) {
                 }
 
                 return 1;
+            } else if (current->status == STRANDED) {
+                int stranded_days = current->stranded_time;
+                float stranded_fee = stranded_days * 1.5f;
+                printf("\n包裹已滞留%d天\n", stranded_days);
+                printf("----------------------------------------\n");
+                printf("滞留费用明细:\n");
+                printf("基础滞留费用: %.2f元/天\n", 1.5f);
+                printf("滞留天数: %d天\n", stranded_days);
+                printf("总滞留费用: %.2f元\n", stranded_fee);
+                printf("----------------------------------------\n");
+                printf("是否支付滞留费用后继续取件？(y/n): ");
+                char confirm = getValidatedCharInput("YyNn");
+                if (confirm == 'y' || confirm == 'Y') {
+                    current->status = PICKED_UP;
+                    current->pickup_time = time(NULL);  // 记录取件时间
+                    strcpy(current->pickup_name,
+                           current->username);  // 记录取件人姓名
+                    printf("滞留包裹取件成功\n");
+                    // 取件后自动保存到文件
+                    if (!savePackagesToFile(system, PACKAGE_FILE)) {
+                        printf("保存包裹数据失败\n");
+                    }
+                    return 1;
+                } else {
+                    printf("滞留包裹取件取消\n");
+                    return 0;
+                }
             } else {
                 printf("此包裹无法取件\n");
                 return 0;
@@ -396,13 +427,10 @@ void handleStrandedPackages(PackageSystem* system, UserSystem* user_system) {
     time_t current_time = time(NULL);
     int found = 0;
     PackageNode* package = system->head;
-
     while (package != NULL) {
         if (package->status == STRANDED) {
-            double time_diff = difftime(current_time, package->store_time);
-            int days = (int)(time_diff / STRANDED_TIME);  // 转换为天数
             printf("%d\t%s\t\t\t%d\n", package->package_id, package->username,
-                   days);
+                   package->stranded_time);
             found = 1;
         }
         package = package->next;
@@ -442,17 +470,13 @@ void processStrandedPackages(PackageSystem* system, int days, int package_id) {
         return;
     }
 
-    time_t current_time = time(NULL);
     int processed_count = 0;
     PackageNode* package = system->head;
 
     while (package != NULL) {
         if (package->status == STRANDED) {
-            double time_diff = difftime(current_time, package->store_time);
-            int package_days = (int)(time_diff / ONE_DAY);
-
             // 根据条件处理包裹
-            if ((days > 0 && package_days >= days) ||
+            if ((days > 0 && package->stranded_time >= days) ||
                 (package_id > 0 && package->package_id == package_id)) {
                 package->status = CLEANED;
                 processed_count++;

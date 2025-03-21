@@ -57,6 +57,7 @@ typedef struct PackageNode {
     time_t store_time;                         // 存储时间戳
     time_t pickup_time;                        // 取件时间戳
     time_t sent_time;                          // 派送时间戳
+    int stranded_time;                         // 滞留时间(天)
     struct PackageNode* next;                  // 指向下一个包裹节点的指针
 } PackageNode;
 typedef struct {

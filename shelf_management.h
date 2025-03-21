@@ -13,14 +13,23 @@ typedef struct {
     ShelfNode* head;  // 货架链表的头指针
     int shelf_count;  // 当前货架数量
 } ShelfSystem;
+// 初始化货架管理系统
 ShelfSystem* initShelfSystem();
+// 更新货架状态信息
 int updateShelfStatus(ShelfSystem* shelf_system, PackageSystem* package_system);
+// 显示当前货架状态
 void displayShelfStatus(ShelfSystem* system);
+// 清空货架系统数据
 void clearShelfSystem(ShelfSystem* system);
+// 检查货架容量警告
 int checkShelfCapacityWarning(ShelfSystem* system);
+// 显示货架使用情况
 void displayShelfUsage(ShelfSystem* shelf_system,
                        PackageSystem* package_system);
+// 显示所有包裹信息
 void displayAllPackages(PackageSystem* system);
+// 处理包裹统计信息
 void handlePackageStatistics(PackageSystem* system, UserSystem* user_system);
+// 显示货架警告信息
 void displayWarningMessage(ShelfSystem* shelf_system);
 #endif  // SHELF_MANAGEMENT_H

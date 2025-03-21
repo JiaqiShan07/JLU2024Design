@@ -27,7 +27,12 @@ void displayMainMenu(UserSystem* user_system) {
     // 显示菜单选项
     printf("\n----------------------------------------");
     printf("\n快递管理系统\n");
-    printf(" 1. 添加包裹\n");
+    if (current_user_type == USER_ADMIN || current_user_type == USER_COURIER){
+        printf(" 1. 入库包裹\n");
+    }else{
+        printf(" 1. 邮寄包裹\n");
+    }
+        
     printf(" 2. 查询用户包裹\n");
     printf(" 3. 取出包裹\n");
     printf(" 4. 拒收包裹\n");

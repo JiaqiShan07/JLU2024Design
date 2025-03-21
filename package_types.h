@@ -34,9 +34,10 @@ typedef enum {
     REJECTED,          // 已拒收
     ABNORMAL,          // 异常
     STRANDED,          // 滞留
-    PICKED_BY_OTHER,    // 已被他人取件
+    PICKED_BY_OTHER,   // 已被他人取件
     CLEANED
 } PackageStatus;
+// 包裹节点结构体，存储包裹的所有相关信息
 typedef struct PackageNode {
     int package_id;                            // 包裹唯一标识符
     char username[MAX_USERNAME_LENGTH];        // 发件人用户名
@@ -60,6 +61,7 @@ typedef struct PackageNode {
     int stranded_time;                         // 滞留时间(天)
     struct PackageNode* next;                  // 指向下一个包裹节点的指针
 } PackageNode;
+// 包裹系统结构体，管理所有包裹节点
 typedef struct {
     PackageNode* head;  // 包裹链表的头指针
     int package_count;  // 系统中的包裹数量

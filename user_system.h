@@ -20,20 +20,33 @@ typedef struct {
     char current_username[MAX_USERNAME_LENGTH];  // 当前登录用户的用户名
     bool is_login;                               // 登录状态
 } UserSystem;
+// 初始化用户管理系统
 UserSystem* initUserSystem();
+// 从文件中加载用户信息
 int loadUsersFromFile(UserSystem* system, const char* filename);
+// 将用户信息保存到文件
 int saveUsersToFile(UserSystem* system, const char* filename);
+// 注册新用户
 char* registerUser(UserSystem* system,
                    const char* username,
                    const char* password,
                    UserType type);
+// 用户登录验证
 int loginUser(UserSystem* system, const char* username, const char* password);
+// 用户退出登录
 void logoutUser(UserSystem* system);
+// 清空所有用户数据
 void clearAllUsers(UserSystem* system);
+// 修改用户密码
 int changeUserPassword(UserSystem* system, const char* username);
+// 处理密码修改的用户交互
 void handleChangePassword(UserSystem* system);
+// 删除用户账户
 int deleteUserAccount(UserSystem* system);
+// 处理用户注册的用户交互
 void handleUserRegister(UserSystem* user_system);
+// 处理用户登录的用户交互
 void handleUserLogin(UserSystem* user_system);
+// 处理快递员注册的用户交互
 void handleCourierRegister(UserSystem* user_system);
 #endif

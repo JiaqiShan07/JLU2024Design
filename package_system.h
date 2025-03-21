@@ -17,7 +17,6 @@ int addPackage(PackageSystem* system,
                PackageStatus status);
 void queryPackagesByUsername(PackageSystem* system, const char* username);
 int pickupPackage(PackageSystem* system, int package_id);
-void displayAllPackages(PackageSystem* system);
 void displayPackageDetails(PackageNode* current);
 void clearAllPackages(PackageSystem* system);
 char* packageSatatusToString(PackageStatus status);
@@ -26,7 +25,6 @@ void handleAddPackage(PackageSystem* system, UserSystem* user_system);
 void handleQueryPackages(PackageSystem* system, UserSystem* user_system);
 void handlePickupPackage(PackageSystem* system, UserSystem* user_system);
 void handleDeliverPackage(PackageSystem* system);
-void handlePackageStatistics(PackageSystem* system, UserSystem* user_system);
 void handleClearSystemData(PackageSystem* system, UserSystem* user_system);
 void handleMarkAbnormalPackage(PackageSystem* system, UserSystem* user_system);
 void handleRejectPackage(PackageSystem* system, UserSystem* user_system);

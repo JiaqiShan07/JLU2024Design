@@ -8,5 +8,6 @@ void displayMainMenu(UserSystem* user_system);
 void displayNotificationMenu(UserSystem* user_system,
                              PackageSystem* package_system);
 void displayFriendMenu(UserSystem* user_system);
+void displayShelfMenu(UserSystem* user_system, PackageSystem* package_system);
 
 #endif

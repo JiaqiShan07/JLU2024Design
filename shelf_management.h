@@ -20,5 +20,7 @@ void clearShelfSystem(ShelfSystem* system);
 int checkShelfCapacityWarning(ShelfSystem* system);
 void displayShelfUsage(ShelfSystem* shelf_system,
                        PackageSystem* package_system);
-
+void displayAllPackages(PackageSystem* system);
+void handlePackageStatistics(PackageSystem* system, UserSystem* user_system);
+void displayWarningMessage(ShelfSystem* shelf_system);
 #endif  // SHELF_MANAGEMENT_H

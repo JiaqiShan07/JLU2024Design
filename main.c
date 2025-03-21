@@ -32,9 +32,9 @@ int main() {
     // 释放系统资源
     free(user_system);
     free(package_system);
-    printf("-----------------\n");
-    printf("感谢使用，再见！\n");
-    printf("-----------------\n");
+    printf("\t-----------------\n");
+    printf("\t感谢使用，再见！\n");
+    printf("\t-----------------\n");
     Sleep(3000);
     return 0;
 }

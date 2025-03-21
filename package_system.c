@@ -312,42 +312,6 @@ int pickupPackage(PackageSystem* system, int package_id) {
 }
 
 // 清除所有包裹数据
-// 显示所有包裹
-void displayAllPackages(PackageSystem* system) {
-    if (system == NULL) {
-        printf("系统未初始化\n");
-        return;
-    }
-
-    printf("\n所有包裹信息:\n");
-    printf("包裹ID\t\t状态\t\t\t更多信息\n");
-
-    PackageNode* current = system->head;
-    while (current != NULL) {
-        printf("%d\t\t%s\t\t\t[%d]\n", current->package_id,
-               packageSatatusToString(current->status), current->package_id);
-        current = current->next;
-    }
-
-    printf("\n输入包裹ID以查看更多详细信息（输入0返回）：");
-    int package_id;
-    package_id = getValidatedIntegerInput(1000, 9999, 1);
-
-    if (package_id != 0) {
-        current = system->head;
-        while (current != NULL) {
-            if (current->package_id == package_id) {
-                displayPackageDetails(current);
-                break;
-            }
-            current = current->next;
-        }
-        if (current == NULL) {
-            printf("未找到包裹\n");
-        }
-    }
-}
-
 void clearAllPackages(PackageSystem* system) {
     if (system == NULL) {
         printf("系统未初始化\n");
@@ -840,82 +804,6 @@ void handleDeliverPackage(PackageSystem* system) {
     }
     printf("未找到包裹\n");
 }
-
-void handlePackageStatistics(PackageSystem* system, UserSystem* user_system) {
-    if (system == NULL || user_system == NULL) {
-        printf("系统未初始化\n");
-        return;
-    }
-
-    int total_packages = 0;    // 系统中的所有包裹
-    int active_packages = 0;   // 占用系统容量的包裹
-    int pending_pickup = 0;    // 待取件
-    int picked_up = 0;         // 已取件
-    int pending_delivery = 0;  // 待寄出
-    int delivered = 0;         // 已寄出
-    int rejected = 0;          // 已拒收
-    int abnormal = 0;          // 异常
-    int stranded = 0;          // 滞留
-    int picked_by_other = 0;   // 已被他人取件
-
-    PackageNode* package = system->head;
-    while (package != NULL) {
-        total_packages++;
-        switch (package->status) {
-            case PENDING_PICKUP:
-                pending_pickup++;
-                active_packages++;
-                break;
-            case PICKED_UP:
-                picked_up++;
-                break;
-            case PENDING_DELIVERY:
-                pending_delivery++;
-                active_packages++;
-                break;
-            case DELIVERED:
-                delivered++;
-                break;
-            case REJECTED:
-                rejected++;
-                active_packages++;
-                break;
-            case ABNORMAL:
-                abnormal++;
-                active_packages++;
-                break;
-            case STRANDED:
-                stranded++;
-                active_packages++;
-                break;
-            case PICKED_BY_OTHER:
-                picked_by_other++;
-                break;
-        }
-        package = package->next;
-    }
-
-    float usage_rate = (float)active_packages / MAX_PACKAGES * 100;
-    float free_rate = 100.0f - usage_rate;
-    printf("----------------------------------------\n");
-    printf("包裹系统统计:\n");
-    printf("总包裹数:\t%d\n", total_packages);
-    printf("占用容量包裹数:\t%d\n", active_packages);
-    printf("系统使用率:\t%.2f%%\n", usage_rate);
-    printf("系统空闲率:\t%.2f%%\n", free_rate);
-    printf("----------------------------------------\n");
-    printf("包裹状态统计:\n");
-    printf("待取件:\t\t%d\n", pending_pickup);
-    printf("已取件:\t\t%d\n", picked_up);
-    printf("待寄出:\t\t%d\n", pending_delivery);
-    printf("已寄出:\t\t%d\n", delivered);
-    printf("已拒收:\t\t%d\n", rejected);
-    printf("异常状态:\t%d\n", abnormal);
-    printf("滞留状态:\t%d\n", stranded);
-    printf("已被他人取件:\t%d\n", picked_by_other);
-    printf("----------------------------------------\n");
-}
-
 void handleClearSystemData(PackageSystem* system, UserSystem* user_system) {
     if (system == NULL || user_system == NULL) {
         printf("系统未初始化\n");

@@ -52,7 +52,7 @@ void handleUserInput(PackageSystem* system, UserSystem* user_system) {
         }
         displayMainMenu(user_system);
         choice = getValidatedIntegerInput(
-            0, 19, 1);  // 第三个参数为1代表可以例外的输入0
+            0, 17, 1);  // 第三个参数为1代表可以例外的输入0
         switch (choice) {
             case 1:
                 pauseAndClearConsole(0);
@@ -119,29 +119,8 @@ void handleUserInput(PackageSystem* system, UserSystem* user_system) {
                 handlePickupPackageByOther(system, user_system);
                 pauseAndClearConsole(1);
                 break;
+
             case 11:
-                pauseAndClearConsole(0);
-                if (current_user_type == USER_ADMIN ||
-                    current_user_type == USER_COURIER) {
-                    displayAllPackages(system);
-                } else {
-                    printf("无效的选择，请重试\n");
-                }
-                pauseAndClearConsole(1);
-                break;
-
-            case 12:
-                pauseAndClearConsole(0);
-                if (current_user_type == USER_ADMIN ||
-                    current_user_type == USER_COURIER) {
-                    handlePackageStatistics(system, user_system);
-                } else {
-                    printf("无效的选择，请重试\n");
-                }
-                pauseAndClearConsole(1);
-                break;
-
-            case 13:
                 pauseAndClearConsole(0);
                 if (current_user_type == USER_ADMIN ||
                     current_user_type == USER_COURIER) {
@@ -152,7 +131,7 @@ void handleUserInput(PackageSystem* system, UserSystem* user_system) {
                 pauseAndClearConsole(1);
                 break;
 
-            case 14:
+            case 12:
                 pauseAndClearConsole(0);
                 if (current_user_type == USER_ADMIN ||
                     current_user_type == USER_COURIER) {
@@ -162,15 +141,15 @@ void handleUserInput(PackageSystem* system, UserSystem* user_system) {
                 }
                 pauseAndClearConsole(1);
                 break;
-            case 15:
-            pauseAndClearConsole(0);
+            case 13:
+                pauseAndClearConsole(0);
                 if (current_user_type == USER_ADMIN ||
                     current_user_type == USER_COURIER) {
-                    handleStrandedPackages(system, user_system);   
-                    }
-            pauseAndClearConsole(1);
+                    handleStrandedPackages(system, user_system);
+                }
+                pauseAndClearConsole(1);
                 break;
-            case 16:
+            case 14:
                 pauseAndClearConsole(0);
                 if (current_user_type == USER_ADMIN) {
                     handleClearSystemData(system, user_system);
@@ -185,7 +164,7 @@ void handleUserInput(PackageSystem* system, UserSystem* user_system) {
                 pauseAndClearConsole(1);
                 break;
 
-            case 17:
+            case 15:
                 pauseAndClearConsole(0);
                 if (current_user_type == USER_ADMIN) {
                     handleCourierRegister(user_system);
@@ -195,24 +174,26 @@ void handleUserInput(PackageSystem* system, UserSystem* user_system) {
                 pauseAndClearConsole(1);
                 break;
 
-            case 18:
+            case 16:
                 pauseAndClearConsole(0);
                 if (current_user_type == USER_ADMIN) {
                     ShelfSystem* shelf_system = initShelfSystem();
-                    if (shelf_system != NULL) {
-                        displayShelfUsage(shelf_system, system);
-                        clearShelfSystem(shelf_system);
-                        free(shelf_system);
-                    } else {
-                        printf("初始化货架系统失败！\n");
-                    }
+                    updateShelfStatus(shelf_system, system);
+                    checkShelfCapacityWarning(shelf_system);
+                    int shelf_choice;
+                    do {
+                        displayWarningMessage(shelf_system);
+                        displayShelfMenu(user_system, system);
+                    } while (!handleShelfMenuInput(system, user_system,
+                                                   shelf_system));
+                    clearShelfSystem(shelf_system);
                 } else {
                     printf("无效的选择，请重试\n");
                 }
                 pauseAndClearConsole(1);
                 break;
 
-            case 19:
+            case 17:
                 pauseAndClearConsole(0);
                 if (current_user_type == USER_ADMIN) {
                     displayFeedbackList(system);
@@ -261,6 +242,35 @@ int handleNotificationMenuInput(UserSystem* user_system,
             return 0;
     }
 }
+int handleShelfMenuInput(PackageSystem* system,
+                         UserSystem* user_system,
+                         ShelfSystem* shelf_system) {
+    int choice = getValidatedIntegerInput(0, 3, 1);
+    switch (choice) {
+        case 1:
+            pauseAndClearConsole(0);
+            handlePackageStatistics(system, user_system);
+            pauseAndClearConsole(1);
+            return 0;
+        case 2:
+            pauseAndClearConsole(0);
+            displayShelfUsage(shelf_system, system);
+            pauseAndClearConsole(1);
+            return 0;
+        case 3:
+            pauseAndClearConsole(0);
+            displayAllPackages(system);
+            pauseAndClearConsole(1);
+            return 0;
+        case 0:
+            return 1;
+        default:
+            printf("无效的选择，请重试\n");
+            pauseAndClearConsole(1);
+            return 0;
+    }
+}
+
 int handleFriendMenuInput(UserSystem* user_system) {
     int choice = getValidatedIntegerInput(0, 4, 1);
 
@@ -290,7 +300,6 @@ int handleFriendMenuInput(UserSystem* user_system) {
             return 0;
 
         case 0:
-            pauseAndClearConsole(0);
             return 1;
 
         default:

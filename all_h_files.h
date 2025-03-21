@@ -19,6 +19,7 @@
 // 功能处理相关头文件
 #include "other_functions.h"
 #include "feedback_assistant.h"
+#include "friend_management.h"
 // 核心功能模块头文件
 #include "notification_handler.h"
 #include "package_system.h"

@@ -1,4 +1,5 @@
 #include "all_h_files.h"
+#include "user_system.h"
 // 从文件加载包裹数据
 int loadPackagesFromFile(PackageSystem* system, const char* filename) {
     if (system == NULL || filename == NULL) {
@@ -198,7 +199,8 @@ void queryPackagesByUsername(PackageSystem* system, const char* username) {
                        packageSatatusToString(current->status),
                        current->package_id);
             } else {
-                printf("%d\t\t%s\t\t\t%s\t\t[%d]\n", current->package_id, "- - -",
+                printf("%d\t\t%s\t\t\t%s\t\t[%d]\n", current->package_id,
+                       "- - -",
 
                        packageSatatusToString(current->status),
                        current->package_id);
@@ -224,51 +226,7 @@ void queryPackagesByUsername(PackageSystem* system, const char* username) {
         while (current != NULL) {
             if (current->package_id == package_id &&
                 strcmp(current->username, username) == 0) {
-                char store_time_str[30] = "";
-                char pickup_time_str[30] = "";
-                char sent_time_str[30] = "";
-                struct tm* timeinfo;
-
-                timeinfo = localtime(&current->store_time);
-                strftime(store_time_str, sizeof(store_time_str),
-                         "%m-%d %H:%M:%S", timeinfo);
-
-                if (current->pickup_time > 0) {
-                    timeinfo = localtime(&current->pickup_time);
-                    strftime(pickup_time_str, sizeof(pickup_time_str),
-                             "%m-%d %H:%M:%S", timeinfo);
-                } else {
-                    strcpy(pickup_time_str, "-");
-                }
-
-                printf("\n包裹详细信息:\n");
-                printf("包裹ID: %d\n", current->package_id);
-                printf("所有者: %s\n", current->username);
-                printf("状态: %s\n", packageSatatusToString(current->status));
-                printf("描述: %s\n", current->description);
-
-                printf("取件码: %s\n", current->pickup_code);
-                printf("位置: %d号货架, %d层\n", current->shelf_number,
-                       current->layer_number);
-                if (current->status == PENDING_DELIVERY) {
-                    printf("收件人: %s\n", current->recipient);
-                    printf("收件人地址: %s\n", current->recipientAdress);
-                    printf("配送费用: %.2f\n", current->delivery_fee);
-                }
-
-                printf("存储时间: %s\n", store_time_str);
-                if (current->status == PICKED_UP) {
-                    printf("取件时间: %s\n", pickup_time_str);
-                } else if (current->status == DELIVERED) {
-                    if (current->sent_time > 0) {
-                        timeinfo = localtime(&current->sent_time);
-                        strftime(sent_time_str, sizeof(sent_time_str),
-                                 "%m-%d %H:%M:%S", timeinfo);
-                        printf("寄出时间: %s\n", sent_time_str);
-                    }
-                }
-                printf("----------------------------------------\n");
-
+                displayPackageDetails(current);
                 break;
             }
             current = current->next;
@@ -292,6 +250,8 @@ int pickupPackage(PackageSystem* system, int package_id) {
             if (current->status == PENDING_PICKUP) {
                 current->status = PICKED_UP;
                 current->pickup_time = time(NULL);  // 记录取件时间
+                strcpy(current->pickup_name,
+                       current->username);  // 记录取件人姓名
                 printf("包裹取件成功\n");
 
                 // 取件后自动保存到文件
@@ -324,7 +284,7 @@ void displayAllPackages(PackageSystem* system) {
 
     PackageNode* current = system->head;
     while (current != NULL) {
-        printf("%d\t\t%s\t\t[%d]\n", current->package_id,
+        printf("%d\t\t%s\t\t\t[%d]\n", current->package_id,
                packageSatatusToString(current->status), current->package_id);
         current = current->next;
     }
@@ -337,50 +297,7 @@ void displayAllPackages(PackageSystem* system) {
         current = system->head;
         while (current != NULL) {
             if (current->package_id == package_id) {
-                char store_time_str[30] = "";
-                char pickup_time_str[30] = "";
-                char sent_time_str[30] = "";
-                struct tm* timeinfo;
-
-                timeinfo = localtime(&current->store_time);
-                strftime(store_time_str, sizeof(store_time_str),
-                         "%m-%d %H:%M:%S", timeinfo);
-
-                if (current->pickup_time > 0) {
-                    timeinfo = localtime(&current->pickup_time);
-                    strftime(pickup_time_str, sizeof(pickup_time_str),
-                             "%m-%d %H:%M:%S", timeinfo);
-                } else {
-                    strcpy(pickup_time_str, "-");
-                }
-
-                printf("\n包裹详细信息:\n");
-                printf("包裹ID: %d\n", current->package_id);
-                printf("所属用户: %s\n", current->username);
-                printf("状态: %s\n", packageSatatusToString(current->status));
-                printf("描述: %s\n", current->description);
-
-                printf("取件码: %s\n", current->pickup_code);
-                printf("位置: 货架 %d, 层 %d\n", current->shelf_number,
-                       current->layer_number);
-                if (current->status == PENDING_DELIVERY) {
-                    printf("收件人: %s\n", current->recipient);
-                    printf("配送费用: %.2f\n", current->delivery_fee);
-                }
-
-                printf("存储时间: %s\n", store_time_str);
-
-                if (current->status == PICKED_UP) {
-                    printf("取件时间: %s\n", pickup_time_str);
-
-                } else if (current->status == DELIVERED) {
-                    if (current->sent_time > 0) {
-                        timeinfo = localtime(&current->sent_time);
-                        strftime(sent_time_str, sizeof(sent_time_str),
-                                 "%m-%d %H:%M:%S", timeinfo);
-                        printf("寄出时间: %s\n", sent_time_str);
-                    }
-                }
+                displayPackageDetails(current);
                 break;
             }
             current = current->next;
@@ -441,6 +358,11 @@ char* packageSatatusToString(PackageStatus status) {
             break;
         case REJECTED:
             return (char*)"拒收";
+            break;
+        case STRANDED:
+            return (char*)"滞留";
+        case PICKED_BY_OTHER:
+            return (char*)"被代取";
             break;
         default:
             return (char*)"未知";
@@ -697,8 +619,13 @@ void handleQueryPackages(PackageSystem* system, UserSystem* user_system) {
     while (current != NULL) {
         if (strcmp(current->username, user_system->current_username) == 0) {
             user_type = current->type;
-            getSpecificUser(user_system, username, user_type,
-                            current->username);
+            if (user_type == USER_ADMIN || user_type == USER_COURIER) {
+                getSpecificUser(user_system, username);
+            } else {
+                // 普通用户只能查看自己的包裹
+                strncpy(username, current->username, MAX_USERNAME_LENGTH);
+            }
+
             break;
         }
         current = current->next;
@@ -714,8 +641,12 @@ void handlePickupPackage(PackageSystem* system, UserSystem* user_system) {
     while (current != NULL) {
         if (strcmp(current->username, user_system->current_username) == 0) {
             user_type = current->type;
-            getSpecificUser(user_system, username, user_type,
-                            current->username);
+            if (user_type == USER_ADMIN || user_type == USER_COURIER) {
+                getSpecificUser(user_system, username);
+            } else {
+                // 普通用户只能查看自己的包裹
+                strncpy(username, current->username, MAX_USERNAME_LENGTH);
+            }
             break;
         }
         current = current->next;
@@ -744,7 +675,7 @@ void handleDeliverPackage(PackageSystem* system) {
         // 检查是否处于待配送状态
         if (current->status == PENDING_DELIVERY ||
             current->status == REJECTED) {  // 待配送状态
-            printf("%d\t%-16s\t%-16s\t%.2f\n", current->package_id,
+            printf("%d\t%s\t\t%s\t\t%.2f\n", current->package_id,
                    current->description, current->recipient,
                    current->delivery_fee);
             found_pending = 1;
@@ -790,58 +721,75 @@ void handlePackageStatistics(PackageSystem* system, UserSystem* user_system) {
         return;
     }
 
-    int total_packages = 0;
-    int pending_pickup = 0;
-    int pending_delivery = 0;
-    int abnormal = 0;
-    int rejected = 0;
+    int total_packages = 0;    // 系统中的所有包裹
+    int active_packages = 0;   // 占用系统容量的包裹
+    int pending_pickup = 0;    // 待取件
+    int picked_up = 0;         // 已取件
+    int pending_delivery = 0;  // 待寄出
+    int delivered = 0;         // 已寄出
+    int rejected = 0;          // 已拒收
+    int abnormal = 0;          // 异常
+    int stranded = 0;          // 滞留
+    int picked_by_other = 0;   // 已被他人取件
 
     PackageNode* package = system->head;
     while (package != NULL) {
+        total_packages++;
         switch (package->status) {
             case PENDING_PICKUP:
                 pending_pickup++;
-                total_packages++;
+                active_packages++;
+                break;
+            case PICKED_UP:
+                picked_up++;
                 break;
             case PENDING_DELIVERY:
                 pending_delivery++;
-                total_packages++;
+                active_packages++;
                 break;
-            case ABNORMAL:
-                abnormal++;
-                total_packages++;
+            case DELIVERED:
+                delivered++;
                 break;
             case REJECTED:
                 rejected++;
-                total_packages++;
+                active_packages++;
                 break;
-            default:
+            case ABNORMAL:
+                abnormal++;
+                active_packages++;
+                break;
+            case STRANDED:
+                stranded++;
+                active_packages++;
+                break;
+            case PICKED_BY_OTHER:
+                picked_by_other++;
                 break;
         }
         package = package->next;
     }
 
-    float usage_rate = (float)total_packages / MAX_PACKAGES * 100;
+    float usage_rate = (float)active_packages / MAX_PACKAGES * 100;
     float free_rate = 100.0f - usage_rate;
     printf("----------------------------------------\n");
     printf("包裹系统统计:\n");
     printf("总包裹数:\t%d\n", total_packages);
+    printf("占用容量包裹数:\t%d\n", active_packages);
     printf("系统使用率:\t%.2f%%\n", usage_rate);
     printf("系统空闲率:\t%.2f%%\n", free_rate);
     printf("----------------------------------------\n");
     printf("包裹状态统计:\n");
     printf("待取件:\t\t%d\n", pending_pickup);
+    printf("已取件:\t\t%d\n", picked_up);
     printf("待寄出:\t\t%d\n", pending_delivery);
+    printf("已寄出:\t\t%d\n", delivered);
+    printf("已拒收:\t\t%d\n", rejected);
     printf("异常状态:\t%d\n", abnormal);
-    printf("被拒绝的包裹:\t%d\n", rejected);
+    printf("滞留状态:\t%d\n", stranded);
+    printf("已被他人取件:\t%d\n", picked_by_other);
     printf("----------------------------------------\n");
 }
-/**
- * 系统数据清空功能
- * @param system 包裹管理系统指针
- * @param user_system 用户系统指针
- * @param
- */
+
 void handleClearSystemData(PackageSystem* system, UserSystem* user_system) {
     if (system == NULL || user_system == NULL) {
         printf("系统未初始化\n");
@@ -978,8 +926,12 @@ void handleRejectPackage(PackageSystem* system, UserSystem* user_system) {
     }
 
     char target_username[MAX_USERNAME_LENGTH];
-    getSpecificUser(user_system, target_username, current_user_type,
-                    current_username);
+    if (current_user_type == USER_ADMIN || current_user_type == USER_COURIER) {
+        getSpecificUser(user_system, target_username);
+    } else {
+        // 普通用户只能查看自己的包裹
+        strncpy(target_username, current->username, MAX_USERNAME_LENGTH);
+    }
     // 显示选定用户的包裹信息
     printf("\n----------------------------------------\n");
     printf("用户 %s 的包裹列表:\n", target_username);
@@ -1112,4 +1064,171 @@ int generatePackageLocation(PackageSystem* system,
     // 如果尝试次数达到上限仍未找到可用位置，返回失败
     printf("警告：无法找到可用的存储位置，所有位置可能已满\n");
     return 0;
+}
+void handlePickupPackageByOther(PackageSystem* system,
+                                UserSystem* user_system) {
+    if (system == NULL || user_system == NULL ||
+        user_system->is_login == false) {
+        printf("请先登录\n");
+        return;
+    }
+
+    // 查找当前用户节点
+    UserNode* current_user = user_system->head;
+    while (current_user != NULL) {
+        if (strcmp(current_user->username, user_system->current_username) ==
+            0) {
+            break;
+        }
+        current_user = current_user->next;
+    }
+
+    if (current_user == NULL) {
+        printf("获取用户信息失败\n");
+        return;
+    }
+
+    // 显示好友列表
+    printf("\n您的好友列表：\n");
+    printf("----------------------------------------\n");
+    int found = 0;
+    for (int i = 0; i < current_user->friend_count; i++) {
+        printf("%s\n", current_user->friends[i]);
+        found = 1;
+    }
+
+    if (!found) {
+        printf("您还没有添加任何好友\n");
+        printf("----------------------------------------\n");
+        return;
+    }
+    printf("----------------------------------------\n");
+
+    // 输入好友用户名
+    char friend_username[MAX_USERNAME_LENGTH];
+    printf("请输入要代取快递的好友用户名（输入0返回）：");
+    getValidatedStringInput(friend_username, MAX_USERNAME_LENGTH);
+
+    if (strcmp(friend_username, "0") == 0) {
+        return;
+    }
+
+    // 验证输入的用户名是否在好友列表中
+    int is_friend = 0;
+    for (int i = 0; i < current_user->friend_count; i++) {
+        if (strcmp(current_user->friends[i], friend_username) == 0) {
+            is_friend = 1;
+            break;
+        }
+    }
+
+    if (!is_friend) {
+        printf("\n错误：该用户不在您的好友列表中\n");
+        return;
+    }
+
+    // 显示好友的包裹
+    printf("\n%s 的包裹列表：\n", friend_username);
+    printf("----------------------------------------\n");
+    queryPackagesByUsername(system, friend_username);
+
+    // 输入要代取的包裹ID
+    int package_id;
+    printf("\n请输入要代取的包裹ID（输入0返回）：");
+    package_id = getValidatedIntegerInput(1000, 9999, 1);
+
+    if (package_id != 0) {
+        pickupPackageByOther(system, package_id, current_user);
+    }
+}
+
+void pickupPackageByOther(PackageSystem* system,
+                          int package_id,
+                          UserNode* current) {
+    if (system == NULL) {
+        printf("系统错误\n");
+        return;
+    }
+
+    PackageNode* package = system->head;
+    while (package != NULL) {
+        if (package->package_id == package_id) {
+            // 检查包裹状态
+            if (package->status != PENDING_PICKUP &&
+                package->status != ABNORMAL) {
+                printf("----------------------------------------\n");
+                printf("该包裹当前状态无法代取\n");
+                printf("当前状态：%s\n",
+                       packageSatatusToString(package->status));
+                printf("----------------------------------------\n");
+                return;
+            }
+
+            // 更新包裹状态为已代取
+            package->status = PICKED_BY_OTHER;
+            package->pickup_time = time(NULL);
+            strcpy(package->pickup_name, current->username);
+            if (!savePackagesToFile(system, PACKAGE_FILE)) {
+                printf("保存包裹信息失败\n");
+            } else {
+                printf("----------------------------------------\n");
+                printf("包裹已成功代取\n");
+                printf("包裹状态：%s\n",
+                       packageSatatusToString(package->status));
+                printf("----------------------------------------\n");
+            }
+            return;
+        }
+        package = package->next;
+    }
+
+    printf("----------------------------------------\n");
+    printf("未找到该包裹\n");
+    printf("----------------------------------------\n");
+}
+void displayPackageDetails(PackageNode* current) {
+    char store_time_str[30] = "";
+    char pickup_time_str[30] = "";
+    char sent_time_str[30] = "";
+    struct tm* timeinfo;
+
+    timeinfo = localtime(&current->store_time);
+    strftime(store_time_str, sizeof(store_time_str), "%m-%d %H:%M:%S",
+             timeinfo);
+
+    if (current->pickup_time > 0) {
+        timeinfo = localtime(&current->pickup_time);
+        strftime(pickup_time_str, sizeof(pickup_time_str), "%m-%d %H:%M:%S",
+                 timeinfo);
+    } else {
+        strcpy(pickup_time_str, "-");
+    }
+    printf("\n包裹详细信息:\n");
+    printf("包裹ID: %d\n", current->package_id);
+    printf("所有者: %s\n", current->username);
+    printf("状态: %s\n", packageSatatusToString(current->status));
+    printf("描述: %s\n", current->description);
+
+    printf("取件码: %s\n", current->pickup_code);
+    printf("位置: %d号货架, %d层\n", current->shelf_number,
+           current->layer_number);
+    if (current->status == PENDING_DELIVERY) {
+        printf("收件人: %s\n", current->recipient);
+        printf("收件人地址: %s\n", current->recipientAdress);
+        printf("配送费用: %.2f\n", current->delivery_fee);
+    }
+
+    printf("存储时间: %s\n", store_time_str);
+    if (current->status == PICKED_UP || current->status == PICKED_BY_OTHER) {
+        printf("取件时间: %s\n", pickup_time_str);
+        printf("取件人: %s\n", current->pickup_name);
+    } else if (current->status == DELIVERED) {
+        if (current->sent_time > 0) {
+            timeinfo = localtime(&current->sent_time);
+            strftime(sent_time_str, sizeof(sent_time_str), "%m-%d %H:%M:%S",
+                     timeinfo);
+            printf("寄出时间: %s\n", sent_time_str);
+        }
+    }
+    printf("----------------------------------------\n");
 }

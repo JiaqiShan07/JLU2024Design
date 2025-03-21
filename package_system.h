@@ -1,5 +1,4 @@
-#ifndef PACKAGE_SYSTEM_H
-#define PACKAGE_SYSTEM_H
+#pragma once
 #include "all_h_files.h"
 #include "user_system.h"
 int loadPackagesFromFile(PackageSystem* system, const char* filename);
@@ -10,6 +9,7 @@ int addPackage(PackageSystem* system,const char* username,const char* descriptio
 void queryPackagesByUsername(PackageSystem* system, const char* username);
 int pickupPackage(PackageSystem* system, int package_id);
 void displayAllPackages(PackageSystem* system);
+void displayPackageDetails(PackageNode*current);
 void clearAllPackages(PackageSystem* system);
 char* packageSatatusToString(PackageStatus status);
 int generatePackageId(PackageSystem* system);
@@ -25,4 +25,7 @@ void handleRejectPackage(PackageSystem* system, UserSystem* user_system);
 int generatePackageLocation(PackageSystem* system,
                             int* shelf_number,
                             int* layer_number);
-#endif  // PACKAGE_SYSTEM_H
+void handlePickupPackageByOther(PackageSystem* system, UserSystem* user_system);
+void pickupPackageByOther(PackageSystem* system,
+                          int package_id,
+                          UserNode* current);

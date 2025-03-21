@@ -145,6 +145,10 @@ char* registerUser(UserSystem* system,
     strncpy(new_node->password, password, MAX_PASSWORD_LENGTH - 1);
     new_node->password[MAX_PASSWORD_LENGTH - 1] = '\0';
     new_node->type = type;
+    new_node->friend_count = 0;
+    new_node->friends[0][0] = '\0';  // 初始化 friends[0]
+    // 为注册的用户分配随机的邀请码
+    strcpy(new_node->invateCode, generateInviteCode());
     new_node->next = NULL;
     // 将新节点添加到链表末尾
     if (system->head == NULL) {
@@ -370,51 +374,66 @@ int deleteUserAccount(UserSystem* system) {
             printf("\n----------------------------------------\n");
             printf("账户注销\n");
             printf("----------------------------------------\n");
-            printf("请输入密码以确认身份: ");
-            getValidatedStringInput(password, MAX_PASSWORD_LENGTH);
+            int attempts = 0;
+            const int MAX_ATTEMPTS = 3;  // 最大尝试次数
+            char old_password[MAX_PASSWORD_LENGTH];
+            // 验证密码，最多允许3次尝试
+            while (attempts < MAX_ATTEMPTS) {
+                printf("\n请输入密码 (还剩 %d 次尝试机会): ",
+                       MAX_ATTEMPTS - attempts);
+                getValidatedStringInput(old_password, MAX_PASSWORD_LENGTH);
 
-            if (strcmp(current->password, password) != 0) {
-                printf("密码错误，注销失败\n");
-                printf("----------------------------------------\n");
-                return 0;
+                if (strcmp(current->password, old_password) == 0) {
+                    // 原密码验证成功，继续注销账户
+                    printf("\n当前账户密码验证成功！\n");
+                    // 再次确认
+                    char confirm;
+                    printf("\n警告：此操作将永久删除您的账户，且不可恢复！\n");
+                    printf("确认注销账户？(y/n): ");
+                    confirm = getValidatedCharInput("YNyn");
+
+                    if (confirm != 'y' && confirm != 'Y') {
+                        printf("操作已取消\n");
+                        printf("----------------------------------------\n");
+                        return 0;
+                    }
+                    // 从链表中删除用户节点
+                    if (prev == NULL) {
+                        system->head = current->next;
+                    } else {
+                        prev->next = current->next;
+                    }
+
+                    // 更新系统状态
+                    system->user_count--;
+                    system->is_login = false;
+
+                    // 释放内存
+                    free(current);
+
+                    // 保存更改到文件
+                    if (!saveUsersToFile(system, USER_FILE)) {
+                        printf("保存用户数据失败\n");
+                        printf("----------------------------------------\n");
+                        return 0;
+                    }
+
+                    printf("账户已成功注销\n");
+                    printf("----------------------------------------\n");
+                    return 1;
+                } else {
+                    attempts++;
+                    if (attempts < MAX_ATTEMPTS) {
+                        printf("\n密码错误！还剩 %d 次尝试机会\n",
+                               MAX_ATTEMPTS - attempts);
+                    } else {
+                        printf("\n连续 %d 次密码验证失败，账户将被登出\n",
+                               MAX_ATTEMPTS);
+                        logoutUser(system);
+                        return 0;
+                    }
+                }
             }
-
-            // 再次确认
-            char confirm;
-            printf("\n警告：此操作将永久删除您的账户，且不可恢复！\n");
-            printf("确认注销账户？(y/n): ");
-            confirm = getValidatedCharInput("YNyn");
-
-            if (confirm != 'y' && confirm != 'Y') {
-                printf("操作已取消\n");
-                printf("----------------------------------------\n");
-                return 0;
-            }
-
-            // 从链表中删除用户节点
-            if (prev == NULL) {
-                system->head = current->next;
-            } else {
-                prev->next = current->next;
-            }
-
-            // 更新系统状态
-            system->user_count--;
-            system->is_login = false;
-
-            // 释放内存
-            free(current);
-
-            // 保存更改到文件
-            if (!saveUsersToFile(system, USER_FILE)) {
-                printf("保存用户数据失败\n");
-                printf("----------------------------------------\n");
-                return 0;
-            }
-
-            printf("账户已成功注销\n");
-            printf("----------------------------------------\n");
-            return 1;
         }
         prev = current;
         current = current->next;

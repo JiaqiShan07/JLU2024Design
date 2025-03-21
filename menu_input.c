@@ -19,7 +19,6 @@ int handleLoginMenuInput(UserSystem* user_system,
                     handleUserInput(package_system, user_system);
                 }
             }
-            pauseAndClearConsole(1);
             return 0;
         case 0:
             pauseAndClearConsole(1);
@@ -53,7 +52,7 @@ void handleUserInput(PackageSystem* system, UserSystem* user_system) {
         }
         displayMainMenu(user_system);
         choice = getValidatedIntegerInput(
-            0, 15, 1);  // 第三个参数为1代表可以例外的输入0
+            0, 19, 1);  // 第三个参数为1代表可以例外的输入0
         switch (choice) {
             case 1:
                 pauseAndClearConsole(0);
@@ -110,31 +109,21 @@ void handleUserInput(PackageSystem* system, UserSystem* user_system) {
                 break;
             case 9:
                 pauseAndClearConsole(0);
-                if (current_user_type == USER_ADMIN ||
-                    current_user_type == USER_COURIER) {
-                    displayAllPackages(system);
-                } else {
-                    printf("无效的选择，请重试\n");
-                }
+                do {
+                    displayFriendMenu(user_system);
+                } while (!handleFriendMenuInput(user_system));
                 pauseAndClearConsole(1);
                 break;
-
             case 10:
                 pauseAndClearConsole(0);
-                if (current_user_type == USER_ADMIN ||
-                    current_user_type == USER_COURIER) {
-                    handlePackageStatistics(system, user_system);
-                } else {
-                    printf("无效的选择，请重试\n");
-                }
+                handlePickupPackageByOther(system, user_system);
                 pauseAndClearConsole(1);
                 break;
-
             case 11:
                 pauseAndClearConsole(0);
                 if (current_user_type == USER_ADMIN ||
                     current_user_type == USER_COURIER) {
-                    handleDeliverPackage(system);
+                    displayAllPackages(system);
                 } else {
                     printf("无效的选择，请重试\n");
                 }
@@ -145,7 +134,7 @@ void handleUserInput(PackageSystem* system, UserSystem* user_system) {
                 pauseAndClearConsole(0);
                 if (current_user_type == USER_ADMIN ||
                     current_user_type == USER_COURIER) {
-                    handleMarkAbnormalPackage(system, user_system);
+                    handlePackageStatistics(system, user_system);
                 } else {
                     printf("无效的选择，请重试\n");
                 }
@@ -153,6 +142,29 @@ void handleUserInput(PackageSystem* system, UserSystem* user_system) {
                 break;
 
             case 13:
+                pauseAndClearConsole(0);
+                if (current_user_type == USER_ADMIN ||
+                    current_user_type == USER_COURIER) {
+                    handleDeliverPackage(system);
+                } else {
+                    printf("无效的选择，请重试\n");
+                }
+                pauseAndClearConsole(1);
+                break;
+
+            case 14:
+                pauseAndClearConsole(0);
+                if (current_user_type == USER_ADMIN ||
+                    current_user_type == USER_COURIER) {
+                    handleMarkAbnormalPackage(system, user_system);
+                } else {
+                    printf("无效的选择，请重试\n");
+                }
+                pauseAndClearConsole(1);
+                break;
+            case 15:
+                break;
+            case 16:
                 pauseAndClearConsole(0);
                 if (current_user_type == USER_ADMIN) {
                     handleClearSystemData(system, user_system);
@@ -167,7 +179,7 @@ void handleUserInput(PackageSystem* system, UserSystem* user_system) {
                 pauseAndClearConsole(1);
                 break;
 
-            case 14:
+            case 17:
                 pauseAndClearConsole(0);
                 if (current_user_type == USER_ADMIN) {
                     handleCourierRegister(user_system);
@@ -177,7 +189,7 @@ void handleUserInput(PackageSystem* system, UserSystem* user_system) {
                 pauseAndClearConsole(1);
                 break;
 
-            case 15:
+            case 18:
                 pauseAndClearConsole(0);
                 if (current_user_type == USER_ADMIN) {
                     ShelfSystem* shelf_system = initShelfSystem();
@@ -194,7 +206,7 @@ void handleUserInput(PackageSystem* system, UserSystem* user_system) {
                 pauseAndClearConsole(1);
                 break;
 
-            case 16:
+            case 19:
                 pauseAndClearConsole(0);
                 if (current_user_type == USER_ADMIN) {
                     displayFeedbackList(system);
@@ -207,6 +219,7 @@ void handleUserInput(PackageSystem* system, UserSystem* user_system) {
                 pauseAndClearConsole(0);
                 logoutUser(user_system);
                 pauseAndClearConsole(1);
+                return;
                 break;
 
             default:
@@ -234,6 +247,44 @@ int handleNotificationMenuInput(UserSystem* user_system,
         case 0:
             logoutUser(user_system);
             pauseAndClearConsole(1);
+            return 1;
+
+        default:
+            printf("无效的选择，请重试\n");
+            pauseAndClearConsole(1);
+            return 0;
+    }
+}
+int handleFriendMenuInput(UserSystem* user_system) {
+    int choice = getValidatedIntegerInput(0, 4, 1);
+
+    switch (choice) {
+        case 1:
+            pauseAndClearConsole(0);
+            handleAddFriends(user_system);
+            pauseAndClearConsole(1);
+            return 0;
+
+        case 2:
+            pauseAndClearConsole(0);
+            handleViewFriends(user_system);
+            pauseAndClearConsole(1);
+            return 0;
+
+        case 3:
+            pauseAndClearConsole(0);
+            handleRemoveFriends(user_system);
+            pauseAndClearConsole(1);
+            return 0;
+
+        case 4:
+            pauseAndClearConsole(0);
+            handleViewInviteCode(user_system);
+            pauseAndClearConsole(1);
+            return 0;
+
+        case 0:
+            pauseAndClearConsole(0);
             return 1;
 
         default:

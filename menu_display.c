@@ -35,23 +35,24 @@ void displayMainMenu(UserSystem* user_system) {
     printf(" 6. 联系智能客服\n");
     printf(" 7. 修改账户密码\n");
     printf(" 8. 注销当前用户\n");
+    printf(" 9. 好友系统\n");
+    printf("10. 代取好友包裹\n");
     // 管理员和快递员可见的额外选项
     if (current_user_type == USER_ADMIN || current_user_type == USER_COURIER) {
-        printf(" 9. 显示所有包裹\n");
-        printf("10. 包裹统计\n");
-        printf("11. 包裹寄出\n");
-        printf("12. 标记异常包裹\n");
-
+        printf("11. 显示所有包裹\n");
+        printf("12. 包裹统计\n");
+        printf("13. 包裹寄出\n");
+        printf("14. 标记异常包裹\n");
+        printf("15. 处理滞留包裹\n");
         // 仅管理员可见的选项
         if (current_user_type == USER_ADMIN) {
-            printf("13. 清空系统数据\n");
-            printf("14. 注册快递员账户\n");
-            printf("15. 打开货架管理系统\n");
-            printf("16. 处理用户反馈信息\n");
-            printf("17. 注销其他用户\n");
+            printf("16. 清空系统数据\n");
+            printf("17. 注册快递员账户\n");
+            printf("18. 打开货架管理系统\n");
+            printf("19. 处理用户反馈信息\n");
         }
     }
-    printf("0. 退出登录\n");
+    printf(" 0. 退出登录\n");
     printf("请选择操作: ");
     printf("\n----------------------------------------\n");
 }
@@ -64,6 +65,18 @@ void displayNotificationMenu(UserSystem* user_system,
     printf("1. 查看通知详情\n");
     printf("2. 进入主菜单\n");
     printf("0. 退出登录\n");
+    printf("请选择操作: ");
+    printf("\n----------------------------------------\n");
+}
+
+void displayFriendMenu(UserSystem* user_system) {
+    printf("\n----------------------------------------");
+    printf("\n好友系统\n");
+    printf("1. 添加好友\n");
+    printf("2. 查看好友列表\n");
+    printf("3. 删除好友\n");
+    printf("4. 查看我的邀请码\n");
+    printf("0. 返回主菜单\n");
     printf("请选择操作: ");
     printf("\n----------------------------------------\n");
 }

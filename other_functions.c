@@ -1,4 +1,4 @@
-#include"all_h_files.h"
+#include "all_h_files.h"
 void pauseAndClearConsole(int getchar_num) {
     if (getchar_num != 0) {
         printf("按Enter键继续...");
@@ -60,14 +60,11 @@ float calculateDeliveryFee(float weight_kg,
 
     return delivery_fee;
 }
-//这是一个专门为管理员和快递员设计的辅助函数，用于列出用户列表并且查询指定用户
-//如果查询到了指定的用户会返回这个用户结点，否则返回NULL
-//会将用户输入的用户名（数据文件中可以查询到的）赋值给target_username
-UserNode* getSpecificUser(UserSystem* user_system,
-                     char target_username[],
-                     UserType current_user_type,
-                     char current_username[]) {
-    if (current_user_type == USER_ADMIN || current_user_type == USER_COURIER) {
+// 这是一个辅助函数，用于列出用户列表并且查询指定用户
+// 如果查询到了指定的用户会返回这个用户结点，否则返回NULL
+// 会将用户输入的用户名（数据文件中可以查询到的）赋值给target_username
+UserNode* getSpecificUser(UserSystem*user_system,char target_username[]) {
+    
         printf("\n可选用户列表:\n");
         printf("----------------------------------------\n");
         UserNode* user = user_system->head;
@@ -96,10 +93,28 @@ UserNode* getSpecificUser(UserSystem* user_system,
             printf("----------------------------------------\n");
             return NULL;
         }
-    } else {
-        // 普通用户只能查看自己的包裹
-        strncpy(target_username, current_username, MAX_USERNAME_LENGTH);
-      
-    }
+    
     return NULL;
+}
+
+char* generateInviteCode() {
+    char* invite_code = (char*)malloc(6 * sizeof(char));
+    if (invite_code == NULL) {
+        return NULL;
+    }
+
+    // 使用当前时间和进程ID作为种子以增加随机性
+    srand((unsigned int)(time(NULL)));
+
+    // 生成首位随机大写字母 (A-Z: 65-90)
+    invite_code[0] = (char)(65 + rand() % 26);
+
+    // 生成后四位随机数字
+    for (int i = 1; i < 5; i++) {
+        invite_code[i] = (char)(48 + rand() % 10);
+    }
+
+    // 添加字符串结束符
+    invite_code[5] = '\0';
+    return invite_code;
 }

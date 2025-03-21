@@ -1,6 +1,9 @@
 #ifndef FEEDBACK_ASSISTANT_H
 #define FEEDBACK_ASSISTANT_H
 #include"all_h_files.h"
+#include "package_system.h"
+#include "shelf_management.h"
+#include "user_system.h"
 #define MAX_FEEDBACK_LENGTH 500    // 反馈内容最大长度
 #define MAX_RESPONSE_LENGTH 1000   // 回复内容最大长度
 typedef enum {

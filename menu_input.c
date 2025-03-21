@@ -163,6 +163,12 @@ void handleUserInput(PackageSystem* system, UserSystem* user_system) {
                 pauseAndClearConsole(1);
                 break;
             case 15:
+            pauseAndClearConsole(0);
+                if (current_user_type == USER_ADMIN ||
+                    current_user_type == USER_COURIER) {
+                    handleStrandedPackages(system, user_system);   
+                    }
+            pauseAndClearConsole(1);
                 break;
             case 16:
                 pauseAndClearConsole(0);

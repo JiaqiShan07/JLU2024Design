@@ -34,7 +34,8 @@ typedef enum {
     REJECTED,          // 已拒收
     ABNORMAL,          // 异常
     STRANDED,          // 滞留
-    PICKED_BY_OTHER    // 已被他人取件
+    PICKED_BY_OTHER,    // 已被他人取件
+    CLEANED
 } PackageStatus;
 typedef struct PackageNode {
     int package_id;                            // 包裹唯一标识符

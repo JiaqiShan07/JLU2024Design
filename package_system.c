@@ -38,6 +38,15 @@ int loadPackagesFromFile(PackageSystem* system, const char* filename) {
         *new_node = temp;
         new_node->next = NULL;
 
+        // 检查包裹是否超过三天未取出
+        if (new_node->status == PENDING_PICKUP) {
+            time_t current_time = time(NULL);
+            double time_diff = difftime(current_time, new_node->store_time);
+            if (time_diff > STRANDED_TIME) {
+                new_node->status = STRANDED;
+            }
+        }
+
         // 将新节点添加到链表末尾
         if (system->head == NULL) {
             system->head = new_node;
@@ -364,9 +373,102 @@ char* packageSatatusToString(PackageStatus status) {
         case PICKED_BY_OTHER:
             return (char*)"被代取";
             break;
+        case CLEANED:
+            return (char*)"已清理";
+            break;
         default:
             return (char*)"未知";
             break;
+    }
+}
+
+void handleStrandedPackages(PackageSystem* system, UserSystem* user_system) {
+    if (system == NULL || user_system == NULL) {
+        printf("系统未初始化\n");
+        return;
+    }
+
+    // 显示所有滞留包裹
+    printf("\n----------------------------------------");
+    printf("\n滞留包裹列表:\n");
+    printf("包裹ID\t所属用户\t\t滞留时间(天)\n");
+    printf("----------------------------------------\n");
+    time_t current_time = time(NULL);
+    int found = 0;
+    PackageNode* package = system->head;
+
+    while (package != NULL) {
+        if (package->status == STRANDED) {
+            double time_diff = difftime(current_time, package->store_time);
+            int days = (int)(time_diff / STRANDED_TIME);  // 转换为天数
+            printf("%d\t%s\t\t\t%d\n", package->package_id, package->username,
+                   days);
+            found = 1;
+        }
+        package = package->next;
+    }
+
+    if (!found) {
+        printf("当前没有滞留包裹\n");
+        return;
+    }
+    printf("\n----------------------------------------");
+    printf("\n处理选项:\n");
+    printf("1. 按时间处理滞留包裹\n");
+    printf("2. 按包裹ID处理\n");
+    printf("0. 返回主菜单\n");
+    printf("----------------------------------------\n");
+    int choice = getValidatedIntegerInput(0, 2, 1);
+
+    switch (choice) {
+        case 1: {
+            printf("请输入要处理的滞留天数(3-30): ");
+            int days = getValidatedIntegerInput(3, 30, 1);
+            processStrandedPackages(system, days, 0);
+            break;
+        }
+        case 2: {
+            printf("请输入要处理的包裹ID: ");
+            int package_id = getValidatedIntegerInput(1000, 9999, 1);
+            processStrandedPackages(system, 0, package_id);
+            break;
+        }
+    }
+}
+
+void processStrandedPackages(PackageSystem* system, int days, int package_id) {
+    if (system == NULL) {
+        printf("系统未初始化\n");
+        return;
+    }
+
+    time_t current_time = time(NULL);
+    int processed_count = 0;
+    PackageNode* package = system->head;
+
+    while (package != NULL) {
+        if (package->status == STRANDED) {
+            double time_diff = difftime(current_time, package->store_time);
+            int package_days = (int)(time_diff / ONE_DAY);
+
+            // 根据条件处理包裹
+            if ((days > 0 && package_days >= days) ||
+                (package_id > 0 && package->package_id == package_id)) {
+                package->status = CLEANED;
+                processed_count++;
+            }
+        }
+        package = package->next;
+    }
+
+    if (processed_count > 0) {
+        if (savePackagesToFile(system, PACKAGE_FILE)) {
+            printf("已成功清理 %d 个滞留包裹\n", processed_count);
+        } else {
+            printf("保存包裹数据失败\n");
+        }
+    } else {
+        printf("未找到符合条件的滞留包裹\n");
     }
 }
 int generatePackageId(PackageSystem* system) {

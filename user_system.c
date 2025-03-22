@@ -358,17 +358,18 @@ void handleChangePassword(UserSystem* system) {
 // 从系统中删除当前登录用户的账户
 // 参数：system - 用户管理系统指针
 // 返回值：成功返回1，失败返回0
-int deleteUserAccount(UserSystem* system) {
-    if (system == NULL || system->is_login == false) {
+int handleDeleteUserAccount(UserSystem* user_system,
+                            PackageSystem* package_system) {
+    if (user_system == NULL || user_system->is_login == false) {
         printf("请先登录\n");
         return 0;
     }
 
     // 获取当前用户信息
-    UserNode* current = system->head;
+    UserNode* current = user_system->head;
     UserNode* prev = NULL;
     while (current != NULL) {
-        if (strcmp(current->username, system->current_username) == 0) {
+        if (strcmp(current->username, user_system->current_username) == 0) {
             // 验证用户身份
             char password[MAX_PASSWORD_LENGTH];
             printf("\n----------------------------------------\n");
@@ -389,6 +390,7 @@ int deleteUserAccount(UserSystem* system) {
                     // 再次确认
                     char confirm;
                     printf("\n警告：此操作将永久删除您的账户，且不可恢复！\n");
+                    printf("\n警告：包裹存取记录，好友信息也将被删除！\n");
                     printf("确认注销账户？(y/n): ");
                     confirm = getValidatedCharInput("YNyn");
 
@@ -397,27 +399,24 @@ int deleteUserAccount(UserSystem* system) {
                         printf("----------------------------------------\n");
                         return 0;
                     }
-                    // 从链表中删除用户节点
-                    if (prev == NULL) {
-                        system->head = current->next;
-                    } else {
-                        prev->next = current->next;
-                    }
-
-                    // 更新系统状态
-                    system->user_count--;
-                    system->is_login = false;
-
-                    // 释放内存
-                    free(current);
-
-                    // 保存更改到文件
-                    if (!saveUsersToFile(system, USER_FILE)) {
-                        printf("保存用户数据失败\n");
-                        printf("----------------------------------------\n");
+                    if (!deleteUser(user_system, package_system,
+                                   user_system->current_username)){
                         return 0;
-                    }
+                                   }
 
+                        // 保存更改到文件
+                        if (!saveUsersToFile(user_system, USER_FILE)) {
+                            printf("保存用户数据失败\n");
+                            printf(
+                                "----------------------------------------\n");
+                            return 0;
+                        }
+                        if(!savePackagesToFile(package_system, PACKAGE_FILE)){
+                            printf("保存包裹数据失败\n");
+                            printf(
+                                "----------------------------------------\n");
+                            return 0; 
+                        }
                     printf("账户已成功注销\n");
                     printf("----------------------------------------\n");
                     return 1;
@@ -429,7 +428,7 @@ int deleteUserAccount(UserSystem* system) {
                     } else {
                         printf("\n连续 %d 次密码验证失败，账户将被登出\n",
                                MAX_ATTEMPTS);
-                        logoutUser(system);
+                        logoutUser(user_system);
                         return 0;
                     }
                 }
@@ -442,6 +441,64 @@ int deleteUserAccount(UserSystem* system) {
     printf("未找到用户信息\n");
     printf("----------------------------------------\n");
     return 0;
+}
+int deleteUser(UserSystem* user_system, PackageSystem* package_system, const char* username) {
+    int reminder = 0;
+    PackageNode* curr_package = package_system->head;
+    PackageNode* pre_package = NULL; // 初始化为 NULL
+
+    while (curr_package) {
+        if (strcmp(curr_package->username, username) == 0) {
+            if (curr_package->status != PICKED_BY_OTHER && curr_package->status != PICKED_UP && curr_package->status != DELIVERED && curr_package->status != CLEANED) {
+                reminder = 1;
+                printf("提示：当前账户中仍然存在需要处理的包裹\n请确保处理完包裹后执行注销操作!\n");
+                return 0;
+            } else {
+                // 执行删除包裹结点的操作
+                if (curr_package == package_system->head) {
+                    package_system->head = curr_package->next;
+                } else {
+                    pre_package->next = curr_package->next;
+                }
+                PackageNode* temp = curr_package;
+                curr_package = curr_package->next;
+                free(temp);
+                package_system->package_count--;
+                continue; // 跳过 pre_package 更新
+            }
+        }
+        pre_package = curr_package;
+        curr_package = curr_package->next;
+    }
+
+    UserNode* curr_user = user_system->head;
+    UserNode* prev = NULL;
+    while (curr_user != NULL) {
+        // 找到用户结点
+        if (strcmp(curr_user->username, username) == 0) {
+            // 查找当前用户的好友执行双向删除
+            for (int i = 0; i < curr_user->friend_count; ++i) {
+                deleteFriend(user_system, curr_user->friends[i]);
+            }
+            break;
+        }
+        prev = curr_user;
+        curr_user = curr_user->next;
+    }
+    if (curr_user == NULL) {
+        printf("用户登录状态异常\n");
+        return 0;
+    }
+    // 删除该用户结点
+    if (prev == NULL) {
+        user_system->head = curr_user->next;
+    } else {
+        prev->next = curr_user->next;
+    }
+    free(curr_user);
+    user_system->user_count--;
+    user_system->is_login = false;
+    return 1;
 }
 // 处理用户注册
 // 引导用户输入注册信息，包括用户名、密码和用户类型

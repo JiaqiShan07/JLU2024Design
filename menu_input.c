@@ -97,7 +97,7 @@ void handleUserInput(PackageSystem* system, UserSystem* user_system) {
                 break;
             case 8:
                 pauseAndClearConsole(0);
-                if (deleteUserAccount(user_system)) {
+                if (handleDeleteUserAccount(user_system,system)) {
                     printf("账户已注销，即将返回登录菜单...\n");
                     Sleep(3000);
                     pauseAndClearConsole(0);
@@ -152,7 +152,7 @@ void handleUserInput(PackageSystem* system, UserSystem* user_system) {
             case 14:
                 pauseAndClearConsole(0);
                 if (current_user_type == USER_ADMIN) {
-                    if(handleClearSystemData(system, user_system)){
+                    if (handleClearSystemData(system, user_system)) {
                         printf("系统数据已清空，即将返回登录菜单...\n");
                         Sleep(3000);
                         pauseAndClearConsole(0);

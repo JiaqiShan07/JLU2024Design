@@ -117,7 +117,8 @@ void showNotificationDetails(UserSystem* user_system,
                         printf("所属用户: %s\n", current->username);
                     }
                     printf("取件码: %s\n", current->pickup_code);
-                    printf("存放位置: %d号柜 第%d层\n", current->shelf_number,
+                    printf("存放位置: %s 第%d层\n",
+                           switchShelfNumToString(current->shelf_number),
                            current->layer_number);
                     printf("----------------------------------------\n");
                 }

@@ -35,7 +35,7 @@ typedef enum {
     ABNORMAL,          // 异常
     STRANDED,          // 滞留
     PICKED_BY_OTHER,   // 已被他人取件
-    CLEANED
+    CLEANED            // 已被管理员清理
 } PackageStatus;
 // 包裹节点结构体，存储包裹的所有相关信息
 typedef struct PackageNode {

@@ -11,7 +11,9 @@ void handleAddFriends(UserSystem* user_system) {
     char friend_username[MAX_USERNAME_LENGTH];
     char invite_code[10];
     printf("请输入要添加的好友用户名: ");
-    getSpecificUser(user_system,friend_username);
+    if(!getSpecificUser(user_system,friend_username)){
+        return;
+    }
     // 检查是否是自己
     if (strcmp(friend_username, user_system->current_username) == 0) {
         printf("不能添加自己为好友\n");
@@ -239,13 +241,7 @@ void deleteFriend(UserSystem* user_system, const char* friend_username) {
             break;
         }
     }
-
-    // 保存更新到文件
-    if (saveUsersToFile(user_system, USER_FILE)) {
-        printf("已成功删除好友 %s\n", friend_username);
-    } else {
-        printf("删除好友成功，但保存到文件失败\n");
-    }
+    
 }
 
 void handleRemoveFriends(UserSystem* user_system) {
@@ -288,6 +284,12 @@ void handleRemoveFriends(UserSystem* user_system) {
 
     if (confirm == 'y' || confirm == 'Y') {
         deleteFriend(user_system, friend_username);
+        // 保存更新到文件
+        if (saveUsersToFile(user_system, USER_FILE)) {
+            printf("已成功删除好友 %s\n", friend_username);
+        } else {
+            printf("删除好友成功，但保存到文件失败\n");
+        }
     } else {
         printf("操作已取消\n");
     }

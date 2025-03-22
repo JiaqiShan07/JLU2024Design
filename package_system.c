@@ -1100,9 +1100,9 @@ int generatePackageLocation(PackageSystem*system,
         // 如果位置未被占满，返回成功
         if (!location_occupied) {
             printf(
-                "已为包裹分配位置：货架 %d 第 %d 层（当前该位置已有 %d "
+                "已为包裹分配位置：%s 第 %d 层（当前该位置已有 %d "
                 "个包裹）\n",
-                *shelf_number, *layer_number, packages_in_location);
+                switchShelfNumToString(*shelf_number), *layer_number, packages_in_location);
             return 1;
         }
 

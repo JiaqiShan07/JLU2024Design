@@ -41,8 +41,11 @@ void clearAllUsers(UserSystem* system);
 int changeUserPassword(UserSystem* system, const char* username);
 // 处理密码修改的用户交互
 void handleChangePassword(UserSystem* system);
-// 删除用户账户
-int deleteUserAccount(UserSystem* system);
+// 处理删除用户账户交互
+int handleDeleteUserAccount(UserSystem* user_system,PackageSystem* package_system);
+// 删除用户核心函数
+int deleteUser(UserSystem* user_system,
+               PackageSystem* package_system, const char* username);
 // 处理用户注册的用户交互
 void handleUserRegister(UserSystem* user_system);
 // 处理用户登录的用户交互

@@ -109,7 +109,7 @@ void displayShelfStatus(ShelfSystem* system) {
         current = system->head;
         while (current != NULL) {
             if (current->shelf_number == shelf_num) {
-                printf("\n货架 #%d:\n", current->shelf_number);
+                printf("\n%s:\n",switchShelfNumToString(current->shelf_number));
                 for (int j = 0; j < LAYER_COUNT; j++) {
                     printf("第 %d 层: %d/%d\n", j + 1,
                            current->packages_per_layer[j], LAYER_CAPACITY);
@@ -150,9 +150,10 @@ int checkShelfCapacityWarning(ShelfSystem* system) {
             if (remaining_percentage < 10.0) {
                 warning_count++;
                 printf(
-                    "警告：货架 #%d "
+                    "警告：%s "
                     "第 %d 层剩余容量不足10%% (当前剩余: %.1f%%)\n",
-                    current->shelf_number, i + 1, remaining_percentage);
+                    switchShelfNumToString(current->shelf_number), i + 1,
+                    remaining_percentage);
             }
         }
         current = current->next;
@@ -316,4 +317,27 @@ void displayWarningMessage(ShelfSystem* shelf_system) {
     } else {
         printf("\n共有 %d 个货架层需要注意容量问题。\n", warning_count);
     }
+}
+char* switchShelfNumToString(int shelf_num){
+    switch (shelf_num) {
+        case 1:
+            return (char*)"1号货架（大件）";
+            break;
+        case 2:
+            return (char*)"2号货架（中件）";
+            break;
+        case 3:
+            return (char*)"3号货架（小件）";
+            break;
+        case 4:
+            return (char*)"4号货架（冷藏）";
+            break;
+        case 5:
+            return (char*)"5号货架（贵重）";
+            break;
+        default:
+            return (char*)"未知";
+            break;
+    }
+    return (char*)"未知";
 }

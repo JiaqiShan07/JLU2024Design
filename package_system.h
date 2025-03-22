@@ -46,14 +46,12 @@ void handleMarkAbnormalPackage(PackageSystem* system, UserSystem* user_system);
 // 处理拒收包裹的操作
 void handleRejectPackage(PackageSystem* system, UserSystem* user_system);
 // 处理滞留包裹的用户交互函数
-// 处理滞留包裹的用户交互
 void handleStrandedPackages(PackageSystem* system, UserSystem* user_system);
 // 处理滞留包裹的核心功能函数
-// 处理滞留包裹的核心功能
 void processStrandedPackages(PackageSystem* system, int days, int package_id);
-// 获取用户列表，并且选择用户
 // 为新包裹生成存储位置
 int generatePackageLocation(PackageSystem* system,
+                            PackageNode* node,
                             int* shelf_number,
                             int* layer_number);
 // 处理他人代取包裹的用户交互

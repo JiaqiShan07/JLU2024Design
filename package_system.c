@@ -44,8 +44,9 @@ int loadPackagesFromFile(PackageSystem* system, const char* filename) {
             double time_diff = difftime(current_time, new_node->store_time);
             if (time_diff > STRANDED_TIME) {
                 new_node->status = STRANDED;
-                new_node->stranded_time= (int)(time_diff- STRANDED_TIME)/ ONE_DAY;
-                //滞留时间要减去滞留的基准时间
+                new_node->stranded_time =
+                    (int)(time_diff - STRANDED_TIME) / ONE_DAY;
+                // 滞留时间要减去滞留的基准时间
             }
         }
         // 将新节点添加到链表末尾
@@ -135,7 +136,7 @@ int addPackage(PackageSystem* system,
         free(new_node);
         return 0;
     }
-    //初始化包裹的属性
+    // 初始化包裹的属性
     new_node->package_id = new_id;
     strncpy(new_node->username, username, MAX_USERNAME_LENGTH - 1);
     new_node->username[MAX_USERNAME_LENGTH - 1] = '\0';
@@ -147,13 +148,14 @@ int addPackage(PackageSystem* system,
     new_node->urgency = urgency;
     new_node->type = type;
     new_node->storage = storage;
-    new_node->stranded_time= 0;
+    new_node->stranded_time = 0;
     new_node->shelf_number = -1;
     new_node->layer_number = -1;
     new_node->pickup_name[0] = '\0';
-    // 使用包裹位置生成器分配货架号和层号
+    
     int shelf_number, layer_number;
-    if (!generatePackageLocation(system, &shelf_number, &layer_number)) {
+    // 随机生成并检查位置是否已满
+    if (!generatePackageLocation(system,new_node, &shelf_number, &layer_number)) {
         free(new_node);
         return 0;
     }
@@ -206,7 +208,8 @@ void queryPackagesByUsername(PackageSystem* system, const char* username) {
     printf("包裹ID\t\t取件码\t\t\t状态\t\t更多信息\n");
     while (current != NULL) {
         if (strcmp(current->username, username) == 0) {
-            if (current->status == PENDING_PICKUP||current->status == STRANDED) {
+            if (current->status == PENDING_PICKUP ||
+                current->status == STRANDED) {
                 printf("%d\t\t%s\t\t%s\t\t[%d]\n", current->package_id,
                        current->pickup_code,
                        packageSatatusToString(current->status),
@@ -1023,14 +1026,42 @@ void handleRejectPackage(PackageSystem* system, UserSystem* user_system) {
     printf("----------------------------------------\n");
 }
 
-int generatePackageLocation(PackageSystem* system,
+int generatePackageLocation(PackageSystem*system,
+                            PackageNode* node,
                             int* shelf_number,
                             int* layer_number) {
     // 参数有效性检查
     if (system == NULL || shelf_number == NULL || layer_number == NULL) {
         return 0;
     }
-
+    // 根据包裹类型和大小分配货架号，层数随机生成
+    // 根据包裹类型和大小确定货架号
+    // 1-3号货架分别放置大中小号非冷藏包裹
+    // 4号货架专门放置冷藏包裹
+    // 5号货架专门放置贵重包裹
+    if (node->storage == STORAGE_COLD) {
+        // 冷藏包裹放在4号货架
+        *shelf_number = 4;
+    } else if (node->type == TYPE_VALUABLE) {
+        // 贵重包裹放在5号货架
+        *shelf_number = 5;
+    } else {
+        // 根据包裹大小分配到1-3号货架
+        switch (node->size) {
+            case SIZE_SMALL:
+                *shelf_number = 3;  // 小号包裹放在3号货架
+                break;
+            case SIZE_MEDIUM:
+                *shelf_number = 2;  // 中号包裹放在2号货架
+                break;
+            case SIZE_LARGE:
+                *shelf_number = 1;  // 大号包裹放在1号货架
+                break;
+            default:
+                *shelf_number = 3;  // 默认放在3号货架
+                break;
+        }
+    }
     // 使用当前时间作为随机数种子
     static int seed_initialized = 0;
     if (!seed_initialized) {
@@ -1039,12 +1070,11 @@ int generatePackageLocation(PackageSystem* system,
     }
 
     int attempts = 0;
-    const int MAX_ATTEMPTS = 50;  // 由于位置组合较少，降低尝试次数
+    const int MAX_ATTEMPTS = 50;  // 由于位置组合较少,尝试次数也少
 
     do {
-        // 随机生成货架号(1-5)和层数(0-1)
-        *shelf_number = (rand() % SHELF_COUNT) + 1;
-        *layer_number = rand() % LAYER_COUNT;
+        // 随机生成层数(1-2)，注意层号从1开始
+        *layer_number = (rand() % LAYER_COUNT) + 1;
 
         // 检查位置是否已被占用或已满
         int location_occupied = 0;
@@ -1052,8 +1082,10 @@ int generatePackageLocation(PackageSystem* system,
         PackageNode* current = system->head;
 
         while (current != NULL) {
-            // 只检查未取走和未送达的包裹
+            // 只检查未取走、未送达、未清理和未被代取的包裹
             if (current->status != PICKED_UP && current->status != DELIVERED &&
+                current->status != CLEANED &&
+                current->status != PICKED_BY_OTHER &&
                 current->shelf_number == *shelf_number &&
                 current->layer_number == *layer_number) {
                 packages_in_location++;
@@ -1070,7 +1102,7 @@ int generatePackageLocation(PackageSystem* system,
             printf(
                 "已为包裹分配位置：货架 %d 第 %d 层（当前该位置已有 %d "
                 "个包裹）\n",
-                *shelf_number, *layer_number + 1, packages_in_location);
+                *shelf_number, *layer_number, packages_in_location);
             return 1;
         }
 
@@ -1171,15 +1203,19 @@ void pickupPackageByOther(PackageSystem* system,
         if (package->package_id == package_id) {
             // 检查包裹状态
             if (package->status != PENDING_PICKUP &&
-                package->status != ABNORMAL) {
+                package->status != STRANDED) {
                 printf("----------------------------------------\n");
                 printf("该包裹当前状态无法代取\n");
                 printf("当前状态：%s\n",
                        packageSatatusToString(package->status));
+                
                 printf("----------------------------------------\n");
+                if (package->status == STRANDED) {
+                    printf("滞留包裹需本人支付滞留费用后取出！\n");
+                    return;
+                }
                 return;
             }
-
             // 更新包裹状态为已代取
             package->status = PICKED_BY_OTHER;
             package->pickup_time = time(NULL);
@@ -1226,7 +1262,7 @@ void displayPackageDetails(PackageNode* current) {
     printf("描述: %s\n", current->description);
 
     printf("取件码: %s\n", current->pickup_code);
-    printf("位置: %d号货架, %d层\n", current->shelf_number,
+    printf("位置: %s, %d层\n", switchShelfNumToString(current->shelf_number),
            current->layer_number);
     if (current->status == PENDING_DELIVERY) {
         printf("收件人: %s\n", current->recipient);

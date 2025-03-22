@@ -32,4 +32,11 @@ void displayAllPackages(PackageSystem* system);
 void handlePackageStatistics(PackageSystem* system, UserSystem* user_system);
 // 显示货架警告信息
 void displayWarningMessage(ShelfSystem* shelf_system);
-#endif  // SHELF_MANAGEMENT_H
+// 将货架号转换为货架的名字
+// 货架的分配原则
+//  根据包裹类型和大小分配货架号，层数随机生成
+//  1-3号货架分别放置大中小号非冷藏包裹
+//  4号货架专门放置冷藏包裹
+//  5号货架专门放置贵重包裹
+char* switchShelfNumToString(int shelf_num);
+#endif

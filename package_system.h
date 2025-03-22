@@ -1,8 +1,8 @@
 #pragma once
 #include "all_h_files.h"
 #include "user_system.h"
-#define STRANDED_TIME 10  // 3天 = 3 * 24 * 60 * 60 = 259200秒
-#define ONE_DAY 3         // 1天 = 24 * 60 * 60 = 86400秒
+#define STRANDED_TIME 180  // 3天 = 3 * 24 * 60 * 60 = 259200秒
+#define ONE_DAY 60         // 1天 = 24 * 60 * 60 = 86400秒
 // 从文件中加载包裹信息到系统
 int loadPackagesFromFile(PackageSystem* system, const char* filename);
 // 将系统中的包裹信息保存到文件

@@ -40,7 +40,7 @@ void handlePickupPackage(PackageSystem* system, UserSystem* user_system);
 // 处理包裹派送操作
 void handleDeliverPackage(PackageSystem* system);
 // 处理清空系统数据的操作
-void handleClearSystemData(PackageSystem* system, UserSystem* user_system);
+int handleClearSystemData(PackageSystem* system, UserSystem* user_system);
 // 处理标记异常包裹的操作
 void handleMarkAbnormalPackage(PackageSystem* system, UserSystem* user_system);
 // 处理拒收包裹的操作

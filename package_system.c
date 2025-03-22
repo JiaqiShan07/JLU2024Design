@@ -804,10 +804,10 @@ void handleDeliverPackage(PackageSystem* system) {
     }
     printf("未找到包裹\n");
 }
-void handleClearSystemData(PackageSystem* system, UserSystem* user_system) {
+int handleClearSystemData(PackageSystem* system, UserSystem* user_system) {
     if (system == NULL || user_system == NULL) {
         printf("系统未初始化\n");
-        return;
+        return 0;
     }
 
     char confirm;
@@ -820,8 +820,10 @@ void handleClearSystemData(PackageSystem* system, UserSystem* user_system) {
         FeedbackSystem* feedback_system = loadFeedbackFromFile();
         clearAllFeedback(feedback_system);
         printf("系统数据已清除\n");
+        return 1;
     } else {
         printf("操作已取消\n");
+        return 0;
     }
 }
 

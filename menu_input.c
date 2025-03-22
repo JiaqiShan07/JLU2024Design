@@ -152,12 +152,12 @@ void handleUserInput(PackageSystem* system, UserSystem* user_system) {
             case 14:
                 pauseAndClearConsole(0);
                 if (current_user_type == USER_ADMIN) {
-                    handleClearSystemData(system, user_system);
-                    printf("系统数据已清空，即将返回登录菜单...\n");
-
-                    Sleep(3000);
-                    pauseAndClearConsole(0);
-                    return;
+                    if(handleClearSystemData(system, user_system)){
+                        printf("系统数据已清空，即将返回登录菜单...\n");
+                        Sleep(3000);
+                        pauseAndClearConsole(0);
+                        return;
+                    }
                 } else {
                     printf("无效的选择，请重试\n");
                 }

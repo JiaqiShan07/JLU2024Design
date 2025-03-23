@@ -1,135 +1,296 @@
 #include "all_h_files.h"
-#define MAX_CHECK_SIZE 100000
+
+// 创建一个空的字符链表
+CharNode* createCharList() {
+    return NULL;
+}
+
+// 向链表末尾添加一个字符
+void appendChar(CharNode** head, char c) {
+    CharNode* newNode = (CharNode*)malloc(sizeof(CharNode));
+    if (newNode == NULL) {
+        printf("内存分配失败\n");
+        exit(1);
+    }
+
+    newNode->data = c;
+    newNode->next = NULL;
+
+    if (*head == NULL) {
+        *head = newNode;
+        return;
+    }
+
+    CharNode* current = *head;
+    while (current->next != NULL) {
+        current = current->next;
+    }
+
+    current->next = newNode;
+}
+
+// 将字符链表转换为字符串
+char* charListToString(CharNode* head) {
+    // 计算链表长度
+    size_t length = 0;
+    CharNode* current = head;
+    while (current != NULL) {
+        length++;
+        current = current->next;
+    }
+
+    // 分配内存
+    char* str = (char*)malloc(length + 1);
+    if (str == NULL) {
+        printf("内存分配失败\n");
+        exit(1);
+    }
+
+    // 复制字符
+    current = head;
+    size_t i = 0;
+    while (current != NULL) {
+        str[i++] = current->data;
+        current = current->next;
+    }
+    str[i] = '\0';
+
+    return str;
+}
+
+// 释放字符链表
+void freeCharList(CharNode* head) {
+    CharNode* current = head;
+    while (current != NULL) {
+        CharNode* next = current->next;
+        free(current);
+        current = next;
+    }
+}
 int getValidatedIntegerInput(int min, int max, int zero_allowed) {
     int value;
-    char input[MAX_CHECK_SIZE];
     char* endptr;
     while (1) {
-        if (fgets(input, sizeof(input), stdin) != NULL) {
-            // 检查是否为空输入（只有回车）
-            if (input[0] == '\n' || (strlen(input) == 1 && input[0] == '\r')) {
-                printf("输入无效，不能为空。请输入一个在 %d 到 %d 之间的整数: ",
-                       min, max);
-                continue;
-            }
-            // 移除换行符
-            input[strcspn(input, "\n")] = 0;
-            // 尝试转换为整数
-            value = strtol(input, &endptr, 10);
-            // 检查是否转换成功且没有多余字符
-            if ((*endptr == '\0') && ((value >= min && value <= max) ||
-                                      (zero_allowed && value == 0))) {
-                return value;
-            }
+        // 创建字符链表
+        CharNode* inputList = createCharList();
+        char c;
+        int isEmpty = 1;
+
+        // 逐字符读取输入
+        while ((c = getchar()) != EOF && c != '\n') {
+            appendChar(&inputList, c);
+            isEmpty = 0;
         }
+
+        // 检查是否为空输入
+        if (isEmpty) {
+            printf("输入无效，不能为空。请输入一个在 %d 到 %d 之间的整数: ",
+                   min, max);
+            freeCharList(inputList);
+            continue;
+        }
+
+        // 将链表转换为字符串
+        char* input = charListToString(inputList);
+
+        // 尝试转换为整数
+        value = strtol(input, &endptr, 10);
+
+        // 检查是否转换成功且没有多余字符
+        if ((*endptr == '\0') &&
+            ((value >= min && value <= max) || (zero_allowed && value == 0))) {
+            freeCharList(inputList);
+            free(input);
+            return value;
+        }
+
         printf("输入无效，请输入一个在 %d 到 %d 之间的整数: ", min, max);
+        freeCharList(inputList);
+        free(input);
     }
 }
 float getValidatedFloatInput(float min, float max) {
     float value;
-    char input[MAX_CHECK_SIZE];
     char* endptr;
     while (1) {
-        if (fgets(input, sizeof(input), stdin) != NULL) {
-            // 检查是否为空输入（只有回车）
-            if (input[0] == '\n' || (strlen(input) == 1 && input[0] == '\r')) {
-                printf(
-                    "输入无效，不能为空。请输入一个在 %.2f 到 %.2f "
-                    "之间的数字: ",
-                    min, max);
-                continue;
-            }
-            // 移除换行符
-            input[strcspn(input, "\n")] = 0;
-            // 尝试转换为浮点数
-            value = strtof(input, &endptr);
-            // 检查是否转换成功且没有多余字符
-            if (*endptr == '\0' && value >= min && value <= max) {
-                return value;
-            }
+        // 创建字符链表
+        CharNode* inputList = createCharList();
+        char c;
+        int isEmpty = 1;
+
+        // 逐字符读取输入
+        while ((c = getchar()) != EOF && c != '\n') {
+            appendChar(&inputList, c);
+            isEmpty = 0;
         }
+
+        // 检查是否为空输入
+        if (isEmpty) {
+            printf(
+                "输入无效，不能为空。请输入一个在 %.2f 到 %.2f "
+                "之间的数字: ",
+                min, max);
+            freeCharList(inputList);
+            continue;
+        }
+
+        // 将链表转换为字符串
+        char* input = charListToString(inputList);
+
+        // 尝试转换为浮点数
+        value = strtof(input, &endptr);
+
+        // 检查是否转换成功且没有多余字符
+        if (*endptr == '\0' && value >= min && value <= max) {
+            freeCharList(inputList);
+            free(input);
+            return value;
+        }
+
         printf("输入无效，请输入一个在 %.2f 到 %.2f 之间的数字: ", min, max);
+        freeCharList(inputList);
+        free(input);
     }
 }
 char getValidatedCharInput(const char* valid_chars) {
-    char input[MAX_CHECK_SIZE];
     char result;
     while (1) {
-        if (fgets(input, sizeof(input), stdin) != NULL) {
-            // 检查是否为空输入（只有回车）
-            if (input[0] == '\n' || (strlen(input) == 1 && input[0] == '\r')) {
-                printf("输入无效，不能为空。请输入以下字符之一: %s\n",
-                       valid_chars);
-                continue;
-            }
-            // 移除换行符
-            input[strcspn(input, "\n")] = 0;
-            // 检查输入是否只有一个字符
-            if (strlen(input) == 1) {
-                result = input[0];
-                // 检查字符是否在有效字符列表中
-                if (strchr(valid_chars, result) != NULL) {
-                    return result;
-                }
+        // 创建字符链表
+        CharNode* inputList = createCharList();
+        char c;
+        int isEmpty = 1;
+
+        // 逐字符读取输入
+        while ((c = getchar()) != EOF && c != '\n') {
+            appendChar(&inputList, c);
+            isEmpty = 0;
+        }
+
+        // 检查是否为空输入
+        if (isEmpty) {
+            printf("输入无效，不能为空。请输入以下字符之一: %s\n", valid_chars);
+            freeCharList(inputList);
+            continue;
+        }
+
+        // 将链表转换为字符串
+        char* input = charListToString(inputList);
+
+        // 检查输入是否只有一个字符
+        if (strlen(input) == 1) {
+            result = input[0];
+            // 检查字符是否在有效字符列表中
+            if (strchr(valid_chars, result) != NULL) {
+                freeCharList(inputList);
+                free(input);
+                return result;
             }
         }
+
         printf("输入无效，请输入以下字符之一: %s\n", valid_chars);
+        freeCharList(inputList);
+        free(input);
     }
 }
 void getValidatedStringInput(char* buffer, size_t max_length) {
-    char* newline;
-    int input_too_long = 0;
     while (1) {
-        if (fgets(buffer, max_length, stdin) != NULL) {
-            // 检查是否为空输入（只有回车）
-            if (buffer[0] == '\n' ||
-                (strlen(buffer) == 1 && buffer[0] == '\r')) {
-                printf("输入无效，不能为空。请重新输入：");
-                continue;
-            }
-            // 查找并移除换行符
-            newline = strchr(buffer, '\n');
-            if (newline != NULL) {
-                *newline = '\0';
-                break;  // 有效输入，退出循环
-            } else {
-                // 如果输入超过最大长度，清除输入缓冲区
-                while (getchar() != '\n')
-                    ;
-                input_too_long = 1;
-            }
+        // 创建字符链表
+        CharNode* inputList = createCharList();
+        char c;
+        int isEmpty = 1;
+        int charCount = 0;
+
+        // 逐字符读取输入
+        while ((c = getchar()) != EOF && c != '\n') {
+            appendChar(&inputList, c);
+            isEmpty = 0;
+            charCount++;
         }
-        // 如果输入超出最大长度，提示用户并继续循环
-        if (input_too_long) {
+
+        // 检查是否为空输入
+        if (isEmpty) {
+            printf("输入无效，不能为空。请重新输入：");
+            freeCharList(inputList);
+            continue;
+        }
+
+        // 将链表转换为字符串
+        char* input = charListToString(inputList);
+
+        // 检查输入长度是否超过最大限制
+        if (charCount >= max_length) {
             printf("输入超出最大长度限制（%zu个字符），请重新输入：",
                    max_length - 1);
-            input_too_long = 0;  // 重置标志
+            freeCharList(inputList);
+            free(input);
+            continue;
         }
+
+        // 复制到输出缓冲区
+        strcpy(buffer, input);
+
+        freeCharList(inputList);
+        free(input);
+        break;
     }
 }
+
 void getValidatedNumAndLetterInput(char* buffer,
                                    size_t min_length,
                                    size_t max_length) {
     int valid;
     do {
         valid = 1;
-        fgets(buffer, max_length + 1, stdin);
-        // 去掉换行符
-        buffer[strcspn(buffer, "\n")] = '\0';
-        size_t length = strlen(buffer);
+
+        // 创建字符链表
+        CharNode* inputList = createCharList();
+        char c;
+        int isEmpty = 1;
+
+        // 逐字符读取输入
+        while ((c = getchar()) != EOF && c != '\n') {
+            appendChar(&inputList, c);
+            isEmpty = 0;
+        }
+
+        // 检查是否为空输入
+        if (isEmpty) {
+            printf("输入无效，不能为空。请重新输入：");
+            freeCharList(inputList);
+            valid = 0;
+            continue;
+        }
+
+        // 将链表转换为字符串
+        char* input = charListToString(inputList);
+        size_t length = strlen(input);
+
+        // 检查长度是否符合要求
         if (length < min_length || length > max_length) {
             printf("输入长度不符合要求，请重试。长度在 %zu 到 %zu 之间\n",
                    min_length, max_length);
             printf("请重新输入：");
+            freeCharList(inputList);
+            free(input);
             valid = 0;
             continue;
         }
+
+        // 检查是否只包含字母和数字
         for (size_t i = 0; i < length; i++) {
-            if (!isalnum(buffer[i])) {
+            if (!isalnum(input[i])) {
                 printf("输入包含非法字符(仅支持字母和数字），请重新输入:");
                 valid = 0;
                 break;
             }
         }
+
+        // 如果输入有效，复制到输出缓冲区
+        if (valid) {
+            strcpy(buffer, input);
+        }
+
+        freeCharList(inputList);
+        free(input);
     } while (!valid);
 }

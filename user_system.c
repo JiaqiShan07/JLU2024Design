@@ -542,21 +542,26 @@ void handleUserRegister(UserSystem* user_system) {
     // 显示用户类型选项
     printf("----------------------------------------\n");
     printf("请选择用户类型:\n");
-    printf("0. 学生用户\n");
-    printf("1. 教师用户\n");
-    printf("2. VIP用户\n");
-    printf("3. 普通用户\n");
-    printf("4. 管理员用户\n");
+    printf("1. 学生用户\n");
+    printf("2. 教师用户\n");
+    printf("3. VIP用户\n");
+    printf("4. 普通用户\n");
+    printf("5. 管理员用户\n");
+    printf("0. 取消注册\n");
     printf("----------------------------------------\n");
-    printf("请选择 (0-4): ");
-    type_choice = getValidatedIntegerInput(0, 4, 1);
-
+    printf("请选择 (0-5): ");
+    type_choice = getValidatedIntegerInput(0, 5, 1);
+    if (type_choice == 0) {
+        printf("注册取消\n");
+        return;
+    }
+    type_choice--;
     // 根据不同用户类型进行特殊验证
     if (type_choice == USER_STUDENT || type_choice == USER_TEACHER) {
         // 学生和教师需要验证教育邮箱
         char email[100];
         printf("请输入吉大邮箱 (格式: xxx@jlu.edu.cn): ");
-        getValidatedNumAndLetterInput(email, 5, 100);
+        getValidatedStringInput(email, sizeof(email));
 
         char* at_pos = strstr(email, "@jlu.edu.cn");
         if (at_pos == NULL || strcmp(at_pos, "@jlu.edu.cn") != 0) {

@@ -3,7 +3,10 @@ void pauseAndClearConsole(int getchar_num) {
     if (getchar_num != 0) {
         printf("按Enter键继续...");
         for (int i = 0; i < getchar_num; i++) {
-            getchar();
+            while (getchar() != '\n') {
+                // 清空输入缓冲区，直到遇到换行符
+                // 防止用户乱七八糟的输入导致缓冲区溢出，导致后续输入错误
+            }
         }
     }
     system("cls");

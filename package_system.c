@@ -157,6 +157,7 @@ int addPackage(PackageSystem* system,
     // 随机生成并检查位置是否已满
     if (!generatePackageLocation(system, new_node, &shelf_number,
                                  &layer_number)) {
+        printf("无法找到合适的位置来存储包裹\n");
         free(new_node);
         return 0;
     }
@@ -1115,7 +1116,9 @@ int generatePackageLocation(PackageSystem* system,
     } while (attempts < MAX_ATTEMPTS);
 
     // 如果尝试次数达到上限仍未找到可用位置，返回失败
-    printf("警告：无法找到可用的存储位置，所有位置可能已满\n");
+    printf("警告：无法找到可用的存储位置，此种类型包裹货架位置可能已满\n");
+    printf("请联系管理员处理\n");
+    printf("----------------------------------------\n");
     return 0;
 }
 void handlePickupPackageByOther(PackageSystem* system,

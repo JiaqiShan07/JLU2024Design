@@ -94,4 +94,10 @@ void displayShelfMenu(UserSystem* user_system, PackageSystem* package_system) {
     printf("0. 返回主菜单\n");
     printf("请选择操作: ");
     printf("\n----------------------------------------\n");
+    printf("货架的分配原则\n");
+    printf("根据包裹类型和大小分配货架号，层数随机生成\n");
+    printf("1-3号货架分别放置大中小号非冷藏包裹\n");
+    printf("4号货架专门放置冷藏包裹\n");
+    printf("5号货架专门放置贵重包裹");
+    printf("\n----------------------------------------\n");
 }

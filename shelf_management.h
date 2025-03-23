@@ -2,7 +2,7 @@
 #define SHELF_MANAGEMENT_H
 #include "all_h_files.h"
 #define SHELF_COUNT 5      // 货架总数
-#define LAYER_COUNT 2      // 每个货架的层数
+#define LAYER_COUNT 3      // 每个货架的层数
 #define LAYER_CAPACITY 10  // 每层容量限制
 typedef struct ShelfNode {
     int shelf_number;                     // 货架编号

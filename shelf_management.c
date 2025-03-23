@@ -56,15 +56,16 @@ int updateShelfStatus(ShelfSystem* shelf_system,
         if (package->status != PICKED_UP && package->status != DELIVERED &&
             package->status != STRANDED) {
             // 检查包裹位置信息的有效性
-            if (package->shelf_number > 0 &&
+            if (package->shelf_number >= 0 &&
                 package->shelf_number <= SHELF_COUNT &&
-                package->layer_number >= 0 &&
-                package->layer_number < LAYER_COUNT) {
+                package->layer_number >= 1 &&
+                package->layer_number <= LAYER_COUNT) {
                 // 查找对应的货架节点
                 current = shelf_system->head;
                 while (current != NULL) {
                     if (current->shelf_number == package->shelf_number) {
-                        current->packages_per_layer[package->layer_number]++;
+                        current
+                            ->packages_per_layer[package->layer_number - 1]++;
                         updated_count++;
                         break;
                     }
@@ -109,7 +110,8 @@ void displayShelfStatus(ShelfSystem* system) {
         current = system->head;
         while (current != NULL) {
             if (current->shelf_number == shelf_num) {
-                printf("\n%s:\n",switchShelfNumToString(current->shelf_number));
+                printf("\n%s:\n",
+                       switchShelfNumToString(current->shelf_number));
                 for (int j = 0; j < LAYER_COUNT; j++) {
                     printf("第 %d 层: %d/%d\n", j + 1,
                            current->packages_per_layer[j], LAYER_CAPACITY);
@@ -318,7 +320,7 @@ void displayWarningMessage(ShelfSystem* shelf_system) {
         printf("\n共有 %d 个货架层需要注意容量问题。\n", warning_count);
     }
 }
-char* switchShelfNumToString(int shelf_num){
+char* switchShelfNumToString(int shelf_num) {
     switch (shelf_num) {
         case 1:
             return (char*)"1号货架（大件）";

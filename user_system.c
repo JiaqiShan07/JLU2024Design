@@ -264,7 +264,9 @@ int changeUserPassword(UserSystem* system, const char* username) {
             while (attempts < MAX_ATTEMPTS) {
                 printf("\n请输入原密码 (还剩 %d 次尝试机会): ",
                        MAX_ATTEMPTS - attempts);
-                getValidatedStringInput(old_password, MAX_PASSWORD_LENGTH);
+                getValidatedNumAndLetterInput(old_password,
+                                              MIN_USERNAME_PASSWORD_LENGTH,
+                                              MAX_PASSWORD_LENGTH);
 
                 if (strcmp(current->password, old_password) == 0) {
                     // 原密码验证成功，继续修改密码流程
@@ -272,11 +274,14 @@ int changeUserPassword(UserSystem* system, const char* username) {
 
                     // 获取新密码
                     printf("\n请输入新密码: ");
-                    getValidatedStringInput(new_password, MAX_PASSWORD_LENGTH);
+                    getValidatedNumAndLetterInput(new_password,
+                                                  MIN_USERNAME_PASSWORD_LENGTH,
+                                                  MAX_PASSWORD_LENGTH);
 
                     printf("请确认新密码: ");
-                    getValidatedStringInput(confirm_password,
-                                            MAX_PASSWORD_LENGTH);
+                    getValidatedNumAndLetterInput(confirm_password,
+                                                  MIN_USERNAME_PASSWORD_LENGTH,
+                                                  MAX_PASSWORD_LENGTH);
 
                     // 验证两次输入的新密码是否一致
                     if (strcmp(new_password, confirm_password) != 0) {
@@ -382,7 +387,9 @@ int handleDeleteUserAccount(UserSystem* user_system,
             while (attempts < MAX_ATTEMPTS) {
                 printf("\n请输入密码 (还剩 %d 次尝试机会): ",
                        MAX_ATTEMPTS - attempts);
-                getValidatedStringInput(old_password, MAX_PASSWORD_LENGTH);
+                getValidatedNumAndLetterInput(old_password,
+                                              MIN_USERNAME_PASSWORD_LENGTH,
+                                              MAX_PASSWORD_LENGTH);
 
                 if (strcmp(current->password, old_password) == 0) {
                     // 原密码验证成功，继续注销账户
@@ -400,23 +407,21 @@ int handleDeleteUserAccount(UserSystem* user_system,
                         return 0;
                     }
                     if (!deleteUser(user_system, package_system,
-                                   user_system->current_username)){
+                                    user_system->current_username)) {
                         return 0;
-                                   }
+                    }
 
-                        // 保存更改到文件
-                        if (!saveUsersToFile(user_system, USER_FILE)) {
-                            printf("保存用户数据失败\n");
-                            printf(
-                                "----------------------------------------\n");
-                            return 0;
-                        }
-                        if(!savePackagesToFile(package_system, PACKAGE_FILE)){
-                            printf("保存包裹数据失败\n");
-                            printf(
-                                "----------------------------------------\n");
-                            return 0; 
-                        }
+                    // 保存更改到文件
+                    if (!saveUsersToFile(user_system, USER_FILE)) {
+                        printf("保存用户数据失败\n");
+                        printf("----------------------------------------\n");
+                        return 0;
+                    }
+                    if (!savePackagesToFile(package_system, PACKAGE_FILE)) {
+                        printf("保存包裹数据失败\n");
+                        printf("----------------------------------------\n");
+                        return 0;
+                    }
                     printf("账户已成功注销\n");
                     printf("----------------------------------------\n");
                     return 1;
@@ -442,16 +447,23 @@ int handleDeleteUserAccount(UserSystem* user_system,
     printf("----------------------------------------\n");
     return 0;
 }
-int deleteUser(UserSystem* user_system, PackageSystem* package_system, const char* username) {
+int deleteUser(UserSystem* user_system,
+               PackageSystem* package_system,
+               const char* username) {
     int reminder = 0;
     PackageNode* curr_package = package_system->head;
-    PackageNode* pre_package = NULL; // 初始化为 NULL
+    PackageNode* pre_package = NULL;  // 初始化为 NULL
 
     while (curr_package) {
         if (strcmp(curr_package->username, username) == 0) {
-            if (curr_package->status != PICKED_BY_OTHER && curr_package->status != PICKED_UP && curr_package->status != DELIVERED && curr_package->status != CLEANED) {
+            if (curr_package->status != PICKED_BY_OTHER &&
+                curr_package->status != PICKED_UP &&
+                curr_package->status != DELIVERED &&
+                curr_package->status != CLEANED) {
                 reminder = 1;
-                printf("提示：当前账户中仍然存在需要处理的包裹\n请确保处理完包裹后执行注销操作!\n");
+                printf(
+                    "提示：当前账户中仍然存在需要处理的包裹\n请确保处理完包裹后"
+                    "执行注销操作!\n");
                 return 0;
             } else {
                 // 执行删除包裹结点的操作
@@ -464,7 +476,7 @@ int deleteUser(UserSystem* user_system, PackageSystem* package_system, const cha
                 curr_package = curr_package->next;
                 free(temp);
                 package_system->package_count--;
-                continue; // 跳过 pre_package 更新
+                continue;  // 跳过 pre_package 更新
             }
         }
         pre_package = curr_package;
@@ -510,7 +522,8 @@ void handleUserRegister(UserSystem* user_system) {
     int type_choice;
     // 获取基本注册信息
     printf("请输入用户名: ");
-    getValidatedStringInput(username, MAX_USERNAME_LENGTH);
+    getValidatedNumAndLetterInput(username, MIN_USERNAME_PASSWORD_LENGTH,
+                                  MAX_USERNAME_LENGTH);
 
     UserNode* current = user_system->head;
     while (current != NULL) {
@@ -523,7 +536,8 @@ void handleUserRegister(UserSystem* user_system) {
     }
 
     printf("请输入密码: ");
-    getValidatedStringInput(password, MAX_PASSWORD_LENGTH);
+    getValidatedNumAndLetterInput(password, MIN_USERNAME_PASSWORD_LENGTH,
+                                  MAX_PASSWORD_LENGTH);
 
     // 显示用户类型选项
     printf("----------------------------------------\n");
@@ -589,9 +603,11 @@ void handleUserLogin(UserSystem* user_system) {
     char password[MAX_PASSWORD_LENGTH];
 
     printf("请输入用户名: ");
-    getValidatedStringInput(username, MAX_USERNAME_LENGTH);
+    getValidatedNumAndLetterInput(username, MIN_USERNAME_PASSWORD_LENGTH,
+                                  MAX_USERNAME_LENGTH);
     printf("请输入密码: ");
-    getValidatedStringInput(password, MAX_PASSWORD_LENGTH);
+    getValidatedNumAndLetterInput(password, MIN_USERNAME_PASSWORD_LENGTH,
+                                  MAX_PASSWORD_LENGTH);
 
     if (loginUser(user_system, username, password)) {
     } else {
@@ -608,9 +624,11 @@ void handleCourierRegister(UserSystem* user_system) {
     char password[MAX_PASSWORD_LENGTH];
 
     printf("请输入快递员用户名: ");
-    getValidatedStringInput(username, MAX_USERNAME_LENGTH);
+    getValidatedNumAndLetterInput(username, MIN_USERNAME_PASSWORD_LENGTH,
+                                  MAX_USERNAME_LENGTH);
     printf("请输入快递员密码: ");
-    getValidatedStringInput(password, MAX_PASSWORD_LENGTH);
+    getValidatedNumAndLetterInput(password, MIN_USERNAME_PASSWORD_LENGTH,
+                                  MAX_PASSWORD_LENGTH);
 
     if (registerUser(user_system, username, password, USER_COURIER)) {
         printf("快递员账户注册成功！\n");

@@ -9,4 +9,8 @@ float getValidatedFloatInput(float min, float max);
 char getValidatedCharInput(const char* valid_chars);
 // 获取并验证字符串输入，确保输入不超过最大长度限制
 void getValidatedStringInput(char* buffer, size_t max_length);
+// 获取并验证指定范围的数字和字母输入，确保输入长度在指定范围内
+void getValidatedNumAndLetterInput(char* buffer,
+                                   size_t min_length,
+                                   size_t max_length);
 #endif

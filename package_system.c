@@ -152,10 +152,11 @@ int addPackage(PackageSystem* system,
     new_node->shelf_number = -1;
     new_node->layer_number = -1;
     new_node->pickup_name[0] = '\0';
-    
+
     int shelf_number, layer_number;
     // 随机生成并检查位置是否已满
-    if (!generatePackageLocation(system,new_node, &shelf_number, &layer_number)) {
+    if (!generatePackageLocation(system, new_node, &shelf_number,
+                                 &layer_number)) {
         free(new_node);
         return 0;
     }
@@ -522,7 +523,9 @@ void handleAddPackage(PackageSystem* system, UserSystem* user_system) {
                     user = user->next;
                 }
                 printf("请输入包裹所有者的用户名: ");
-                getValidatedStringInput(username, MAX_USERNAME_LENGTH);
+                getValidatedNumAndLetterInput(username,
+                                              MIN_USERNAME_PASSWORD_LENGTH,
+                                              MAX_USERNAME_LENGTH);
 
                 // 验证用户名是否存在
                 int user_found = 0;
@@ -579,7 +582,7 @@ void handleAddPackage(PackageSystem* system, UserSystem* user_system) {
                                  type_choice, storage_choice, user_type);
         pauseAndClearConsole(0);
         printf("----------------------------------------\n");
-        printf("配送费用明细:\n");
+        printf("快递运输费用明细:\n");
         printf("----------------------------------------\n");
         printf("基础运费 (%.2f 元/kg):\t%.2f 元\n", 0.8f, weight_kg * 0.8f);
 
@@ -852,7 +855,8 @@ void handleMarkAbnormalPackage(PackageSystem* system, UserSystem* user_system) {
     // 选择用户
     char username[MAX_USERNAME_LENGTH];
     printf("请输入要检查包裹的用户名：");
-    getValidatedStringInput(username, MAX_USERNAME_LENGTH);
+    getValidatedNumAndLetterInput(username, MIN_USERNAME_PASSWORD_LENGTH,
+                                  MAX_USERNAME_LENGTH);
 
     // 验证用户是否存在
     int user_found = 0;
@@ -1026,7 +1030,7 @@ void handleRejectPackage(PackageSystem* system, UserSystem* user_system) {
     printf("----------------------------------------\n");
 }
 
-int generatePackageLocation(PackageSystem*system,
+int generatePackageLocation(PackageSystem* system,
                             PackageNode* node,
                             int* shelf_number,
                             int* layer_number) {
@@ -1102,7 +1106,8 @@ int generatePackageLocation(PackageSystem*system,
             printf(
                 "已为包裹分配位置：%s 第 %d 层（当前该位置已有 %d "
                 "个包裹）\n",
-                switchShelfNumToString(*shelf_number), *layer_number, packages_in_location);
+                switchShelfNumToString(*shelf_number), *layer_number,
+                packages_in_location);
             return 1;
         }
 
@@ -1155,7 +1160,8 @@ void handlePickupPackageByOther(PackageSystem* system,
     // 输入好友用户名
     char friend_username[MAX_USERNAME_LENGTH];
     printf("请输入要代取快递的好友用户名（输入0返回）：");
-    getValidatedStringInput(friend_username, MAX_USERNAME_LENGTH);
+    getValidatedNumAndLetterInput(friend_username, MIN_USERNAME_PASSWORD_LENGTH,
+                                  MAX_USERNAME_LENGTH);
 
     if (strcmp(friend_username, "0") == 0) {
         return;
@@ -1208,7 +1214,7 @@ void pickupPackageByOther(PackageSystem* system,
                 printf("该包裹当前状态无法代取\n");
                 printf("当前状态：%s\n",
                        packageSatatusToString(package->status));
-                
+
                 printf("----------------------------------------\n");
                 if (package->status == STRANDED) {
                     printf("滞留包裹需本人支付滞留费用后取出！\n");

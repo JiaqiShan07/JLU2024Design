@@ -1,4 +1,4 @@
-#include"all_h_files.h"
+#include "all_h_files.h"
 // 添加好友，添加好友是双向的，添加的时候需要输入对方的用户名,以及对方的邀请码
 // 添加后对方的列表也会出现自己
 // 参数：user_system - 用户管理系统指针
@@ -7,11 +7,11 @@ void handleAddFriends(UserSystem* user_system) {
         printf("请先登录\n");
         return;
     }
-    
+
     char friend_username[MAX_USERNAME_LENGTH];
     char invite_code[10];
     printf("请输入要添加的好友用户名: ");
-    if(!getSpecificUser(user_system,friend_username)){
+    if (!getSpecificUser(user_system, friend_username)) {
         return;
     }
     // 检查是否是自己
@@ -44,7 +44,7 @@ void handleAddFriends(UserSystem* user_system) {
     }
 
     printf("请输入好友的邀请码: ");
-    getValidatedStringInput(invite_code, 10);
+    getValidatedNumAndLetterInput(invite_code, 0, 10);
 
     // 调用核心逻辑函数添加好友
     addFriends(user_system, friend_username, invite_code);
@@ -241,7 +241,6 @@ void deleteFriend(UserSystem* user_system, const char* friend_username) {
             break;
         }
     }
-    
 }
 
 void handleRemoveFriends(UserSystem* user_system) {
@@ -276,7 +275,8 @@ void handleRemoveFriends(UserSystem* user_system) {
 
     char friend_username[MAX_USERNAME_LENGTH];
     printf("\n请输入要删除的好友用户名: ");
-    getValidatedStringInput(friend_username, MAX_USERNAME_LENGTH);
+    getValidatedNumAndLetterInput(friend_username, MIN_USERNAME_PASSWORD_LENGTH,
+                                  MAX_USERNAME_LENGTH);
 
     // 确认删除
     printf("确认要删除好友 %s 吗？(y/n): ", friend_username);

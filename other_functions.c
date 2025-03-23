@@ -63,38 +63,39 @@ float calculateDeliveryFee(float weight_kg,
 // 这是一个辅助函数，用于列出用户列表并且查询指定用户
 // 如果查询到了指定的用户会返回这个用户结点，否则返回NULL
 // 会将用户输入的用户名（数据文件中可以查询到的）赋值给target_username
-UserNode* getSpecificUser(UserSystem*user_system,char target_username[]) {
-        //重新加载一次用户列表，确保信息是最新的
-        loadUsersFromFile(user_system, "users.txt");
-        printf("\n可选用户列表:\n");
-        printf("----------------------------------------\n");
-        UserNode* user = user_system->head;
-        while (user != NULL) {
-            printf("%s\n", user->username);
-            user = user->next;
-        }
-        printf("----------------------------------------\n");
-        printf("请输入要进行操作的用户名: ");
-        getValidatedStringInput(target_username, MAX_USERNAME_LENGTH);
+UserNode* getSpecificUser(UserSystem* user_system, char target_username[]) {
+    // 重新加载一次用户列表，确保信息是最新的
+    loadUsersFromFile(user_system, "users.txt");
+    printf("\n可选用户列表:\n");
+    printf("----------------------------------------\n");
+    UserNode* user = user_system->head;
+    while (user != NULL) {
+        printf("%s\n", user->username);
+        user = user->next;
+    }
+    printf("----------------------------------------\n");
+    printf("请输入要进行操作的用户名: ");
+    getValidatedNumAndLetterInput(target_username, MIN_USERNAME_PASSWORD_LENGTH,
+                                  MAX_USERNAME_LENGTH);
 
-        // 验证用户名是否存在
-        int user_found = 0;
-        user = user_system->head;
-        while (user != NULL) {
-            if (strcmp(user->username, target_username) == 0) {
-                user_found = 1;
-                return user;
-                break;
-            }
-            user = user->next;
+    // 验证用户名是否存在
+    int user_found = 0;
+    user = user_system->head;
+    while (user != NULL) {
+        if (strcmp(user->username, target_username) == 0) {
+            user_found = 1;
+            return user;
+            break;
         }
-        if (!user_found) {
-            printf("----------------------------------------\n");
-            printf("未找到该用户\n");
-            printf("----------------------------------------\n");
-            return NULL;
-        }
-    
+        user = user->next;
+    }
+    if (!user_found) {
+        printf("----------------------------------------\n");
+        printf("未找到该用户\n");
+        printf("----------------------------------------\n");
+        return NULL;
+    }
+
     return NULL;
 }
 

@@ -1,8 +1,8 @@
 #include "all_h_files.h"
-
+#define MAX_CHECK_SIZE 100000
 int getValidatedIntegerInput(int min, int max, int zero_allowed) {
     int value;
-    char input[10000];
+    char input[MAX_CHECK_SIZE];
     char* endptr;
     while (1) {
         if (fgets(input, sizeof(input), stdin) != NULL) {
@@ -27,7 +27,7 @@ int getValidatedIntegerInput(int min, int max, int zero_allowed) {
 }
 float getValidatedFloatInput(float min, float max) {
     float value;
-    char input[10000];
+    char input[MAX_CHECK_SIZE];
     char* endptr;
     while (1) {
         if (fgets(input, sizeof(input), stdin) != NULL) {
@@ -52,7 +52,7 @@ float getValidatedFloatInput(float min, float max) {
     }
 }
 char getValidatedCharInput(const char* valid_chars) {
-    char input[10000];
+    char input[MAX_CHECK_SIZE];
     char result;
     while (1) {
         if (fgets(input, sizeof(input), stdin) != NULL) {
@@ -106,4 +106,30 @@ void getValidatedStringInput(char* buffer, size_t max_length) {
             input_too_long = 0;  // 重置标志
         }
     }
+}
+void getValidatedNumAndLetterInput(char* buffer,
+                                   size_t min_length,
+                                   size_t max_length) {
+    int valid;
+    do {
+        valid = 1;
+        fgets(buffer, max_length + 1, stdin);
+        // 去掉换行符
+        buffer[strcspn(buffer, "\n")] = '\0';
+        size_t length = strlen(buffer);
+        if (length < min_length || length > max_length) {
+            printf("输入长度不符合要求，请重试。长度在 %zu 到 %zu 之间\n",
+                   min_length, max_length);
+            printf("请重新输入：");
+            valid = 0;
+            continue;
+        }
+        for (size_t i = 0; i < length; i++) {
+            if (!isalnum(buffer[i])) {
+                printf("输入包含非法字符(仅支持字母和数字），请重新输入:");
+                valid = 0;
+                break;
+            }
+        }
+    } while (!valid);
 }

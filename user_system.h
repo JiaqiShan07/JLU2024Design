@@ -1,10 +1,11 @@
 #ifndef USER_SYSTEM_H
 #define USER_SYSTEM_H
 #include "all_h_files.h"
-#define MAX_USERS 100           // 系统支持的最大用户数
-#define MAX_USERNAME_LENGTH 50  // 用户名的最大长度
-#define MAX_PASSWORD_LENGTH 50  // 密码的最大长度
-#define MAX_FRIENDS 10          // 好友的最大数量
+#define MAX_USERS 100                   // 系统支持的最大用户数
+#define MAX_USERNAME_LENGTH 50          // 用户名的最大长度
+#define MIN_USERNAME_PASSWORD_LENGTH 3  // 用户名/密码的最小长度
+#define MAX_PASSWORD_LENGTH 50          // 密码的最大长度
+#define MAX_FRIENDS 10                  // 好友的最大数量
 typedef struct UserNode {
     char username[MAX_USERNAME_LENGTH];              // 用户名
     char password[MAX_PASSWORD_LENGTH];              // 密码
@@ -42,10 +43,12 @@ int changeUserPassword(UserSystem* system, const char* username);
 // 处理密码修改的用户交互
 void handleChangePassword(UserSystem* system);
 // 处理删除用户账户交互
-int handleDeleteUserAccount(UserSystem* user_system,PackageSystem* package_system);
+int handleDeleteUserAccount(UserSystem* user_system,
+                            PackageSystem* package_system);
 // 删除用户核心函数
 int deleteUser(UserSystem* user_system,
-               PackageSystem* package_system, const char* username);
+               PackageSystem* package_system,
+               const char* username);
 // 处理用户注册的用户交互
 void handleUserRegister(UserSystem* user_system);
 // 处理用户登录的用户交互

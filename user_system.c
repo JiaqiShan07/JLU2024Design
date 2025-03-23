@@ -556,7 +556,7 @@ void handleUserRegister(UserSystem* user_system) {
         // 学生和教师需要验证教育邮箱
         char email[100];
         printf("请输入吉大邮箱 (格式: xxx@jlu.edu.cn): ");
-        getValidatedStringInput(email, 100);
+        getValidatedNumAndLetterInput(email, 5, 100);
 
         char* at_pos = strstr(email, "@jlu.edu.cn");
         if (at_pos == NULL || strcmp(at_pos, "@jlu.edu.cn") != 0) {

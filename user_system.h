@@ -55,4 +55,8 @@ void handleUserRegister(UserSystem* user_system);
 void handleUserLogin(UserSystem* user_system);
 // 处理快递员注册的用户交互
 void handleCourierRegister(UserSystem* user_system);
+// 处理升级VIP用户的交互
+void handleUpgradeVIP(UserSystem* user_system);
+// 升级VIP的核心函数
+int upgradeVIP(UserSystem* user_system);
 #endif

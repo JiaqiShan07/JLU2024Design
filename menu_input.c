@@ -122,7 +122,10 @@ void handleUserInput(PackageSystem* system, UserSystem* user_system) {
 
             case 11:
                 pauseAndClearConsole(0);
-                if (current_user_type == USER_ADMIN ||
+                if (current_user_type !=USER_ADMIN && current_user_type != USER_COURIER && current_user_type != USER_VIP) {
+                    handleUpgradeVIP(user_system);
+                }
+                else if (current_user_type == USER_ADMIN ||
                     current_user_type == USER_COURIER) {
                     handleDeliverPackage(system);
                 } else {

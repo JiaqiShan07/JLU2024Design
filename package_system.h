@@ -60,3 +60,7 @@ void handlePickupPackageByOther(PackageSystem* system, UserSystem* user_system);
 void pickupPackageByOther(PackageSystem* system,
                           int package_id,
                           UserNode* current);
+// 清理无效包裹结点的交互函数
+void handleCleanInvalidPackageNode(PackageSystem* system);
+// 清理无效包裹结点的核心功能函数
+void cleanInvalidPackageNode(PackageSystem* system);

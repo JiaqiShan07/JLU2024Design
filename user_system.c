@@ -641,3 +641,72 @@ void handleCourierRegister(UserSystem* user_system) {
         printf("快递员账户注册失败，请重试\n");
     }
 }
+int upgradeVIP(UserSystem* user_system) {
+    if (user_system == NULL || user_system->is_login == false) {
+        printf("请先登录\n");
+        return 0;
+    }
+    char current_user[MAX_USERNAME_LENGTH];
+    strcpy(current_user, user_system->current_username);
+    UserNode* current = user_system->head;
+    //遍历链表找到对应的人
+    while (current!=NULL) {
+        if (strcmp(current->username, current_user) == 0) {
+            break;
+        }
+        current = current->next;
+    }
+    if (current->type != USER_VIP) {
+        current->type = USER_VIP;
+    }
+    if (!saveUsersToFile(user_system, USER_FILE)) {
+        printf("保存密码修改失败\n");
+        return 0;
+    }
+    return 1;
+}
+void handleUpgradeVIP(UserSystem* user_system) {
+    //添加VIP板块，用户可自行选择是否成为VIP用户
+        char response;
+        // 显示欢迎信息
+        printf("欢迎注册！我们现在正在邀请客户成为 VIP 会员。\n");
+        // 显示 VIP 权益
+        printf("----------------------------------------\n");
+        printf("成为 VIP 会员，您可以享受以下权益：\n");
+        printf("1. 享受6折寄件优惠。\n");
+        printf("2. 预付费结算。\n");
+        printf("----------------------------------------\n");
+        // 询问用户是否愿意成为 VIP
+        printf("您是否愿意成为我们的 VIP 会员，并支付200元年费？(Y/N): ");
+        // 获取用户的响应
+        response = getValidatedCharInput("YNyn");
+        // 根据用户的响应给出相应的反馈
+            if (response == 'Y' || response == 'y') {
+                printf("支付成功！非常感谢您的支持，我们将为您办理 VIP 会员手续。\n");
+                if (!upgradeVIP(user_system)) {
+                    printf("保存信息失败！联系管理员处理！");
+                    return;
+                }
+            }
+            else if (response == 'N' || response == 'n') {
+                printf("没关系，如果您以后有兴趣，可以随时联系我们。\n");
+              
+            }
+            char current_user[MAX_USERNAME_LENGTH];
+            strcpy(current_user, user_system->current_username);
+            UserNode* current = user_system->head;
+            //遍历链表找到对应的人
+            while (current != NULL) {
+                if (strcmp(current->username, current_user) == 0) {
+                    break;
+                }
+                current = current->next;
+            }
+            
+            if (current->type == USER_VIP) {
+            printf("已成功记录您为 VIP 会员。\n");
+            }
+        else {
+            printf("期待您以后成为我们的 VIP 会员。\n");
+        }
+}

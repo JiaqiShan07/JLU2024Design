@@ -42,6 +42,9 @@ void displayMainMenu(UserSystem* user_system) {
     printf(" 8. 注销当前用户\n");
     printf(" 9. 好友系统\n");
     printf("10. 代取好友包裹\n");
+    if ((current_user_type !=USER_ADMIN) && (current_user_type != USER_COURIER )&& (current_user_type != USER_VIP)) {
+        printf("11. 升级成为VIP\n");
+    }
     // 管理员和快递员可见的额外选项
     if (current_user_type == USER_ADMIN || current_user_type == USER_COURIER) {
         printf("11. 包裹寄出\n");

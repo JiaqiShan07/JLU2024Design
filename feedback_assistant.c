@@ -26,7 +26,12 @@ static const KeywordResponse AUTO_RESPONSES[] = {
     {"时间",
      "我们的快递服务时间为每天8:00-22:00，请在此时间段内进行取件和寄件操作。"},
     {"丢失",
-     "如果您的快递出现丢失情况，请立即联系管理员或提交反馈，我们会优先处理。"}};
+     "如果您的快递出现丢失情况，请立即联系管理员或提交反馈，我们会优先处理。"},
+    {"VIP",
+     "如需成为VIP用户，请进入主菜单寻找选项。"},
+    {"vip",
+     "如需成为VIP用户，请进入主菜单寻找选项。"}
+};
 
 // 初始化反馈系统
 static FeedbackSystem* initFeedbackSystem() {
@@ -234,7 +239,7 @@ void handleContactSmartAssistant(PackageSystem* package_system,
             printf("----------------------------------------\n");
             printf("感谢您的使用，再见！\n");
             printf("----------------------------------------\n");
-            Sleep(4000);  // 暂停4秒
+            Sleep(2000);  // 暂停2秒
             pauseAndClearConsole(0);
             break;
         }
@@ -253,7 +258,7 @@ void handleContactSmartAssistant(PackageSystem* package_system,
             // strstr返回NULL表示未找到，非NULL表示找到
             if (strstr(input, AUTO_RESPONSES[i].keyword) != NULL) {
                 printf("响应中...\n");
-                Sleep(1500);  // 暂停1.5秒
+                Sleep(1000);  // 暂停1.5秒
                 // 找到匹配的关键词后输出对应的预设回复
                 printf("\n智能助手: %s\n", AUTO_RESPONSES[i].response);
                 // 设置标记表示已找到回复
@@ -264,10 +269,10 @@ void handleContactSmartAssistant(PackageSystem* package_system,
         }
         // 只有在用户实际输入内容且未找到匹配关键词时才显示服务器繁忙
         if (!found_response && strlen(input) > 0) {
-            Sleep(2000);  // 暂停2秒
+            Sleep(1000);  // 暂停2秒
             printf("\n服务器繁忙，请稍后再试！\n");
             printf("思考中...\n");
-            Sleep(3000);  // 暂停3秒
+            Sleep(1000);  // 暂停3秒
             printf(
                 "\n智能助手: "
                 "抱歉，我暂时无法理解您的问题。您可以尝试询问关于快递、取件、投"

@@ -1,5 +1,5 @@
 #include "all_h_files.h"
-#define MAX_CHECK_SIZE 1000000
+#define MAX_CHECK_SIZE 100000
 int getValidatedIntegerInput(int min, int max, int zero_allowed) {
     int value;
     char input[MAX_CHECK_SIZE];

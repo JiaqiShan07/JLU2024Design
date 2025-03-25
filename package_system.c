@@ -1293,3 +1293,9 @@ void displayPackageDetails(PackageNode* current) {
     }
     printf("----------------------------------------\n");
 }
+void handleCleanInvalidPackageNode(PackageSystem* system){
+
+}
+void cleanInvalidPackageNode(PackageSystem* system){
+    
+}

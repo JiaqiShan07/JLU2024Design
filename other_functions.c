@@ -68,7 +68,7 @@ float calculateDeliveryFee(float weight_kg,
 // 会将用户输入的用户名（数据文件中可以查询到的）赋值给target_username
 UserNode* getSpecificUser(UserSystem* user_system, char target_username[]) {
     // 重新加载一次用户列表，确保信息是最新的
-    loadUsersFromFile(user_system, "users.txt");
+    loadUsersFromFile(user_system, USER_FILE);
     printf("\n可选用户列表:\n");
     printf("----------------------------------------\n");
     UserNode* user = user_system->head;

@@ -67,6 +67,7 @@ int loadPackagesFromFile(PackageSystem* system, const char* filename) {
 }
 
 // 保存包裹数据到文件
+// 保存成功返回1，失败返回0
 int savePackagesToFile(PackageSystem* system, const char* filename) {
     if (system == NULL || filename == NULL) {
         return 0;
@@ -779,7 +780,7 @@ void handleDeliverPackage(PackageSystem* system) {
         }
         current = current->next;
     }
-
+    printf("----------------------------------------\n");
     if (!found_pending) {
         printf("没有待寄出的包裹\n");
         return;
@@ -818,7 +819,9 @@ int handleClearSystemData(PackageSystem* system, UserSystem* user_system) {
     }
 
     char confirm;
+    printf("-----------------------------------------------------\n");
     printf("警告: 此操作将清除所有用户和包裹以及反馈数据。继续吗？(y/n): ");
+    printf("-----------------------------------------------------\n");
     confirm = getValidatedCharInput("YNyn");
 
     if (confirm == 'y' || confirm == 'Y') {
@@ -846,6 +849,7 @@ void handleMarkAbnormalPackage(PackageSystem* system, UserSystem* user_system) {
     }
 
     // 显示用户列表
+    printf("----------------------------------------\n");
     printf("\n可选用户列表：\n");
     UserNode* user = user_system->head;
     while (user != NULL) {
@@ -875,8 +879,9 @@ void handleMarkAbnormalPackage(PackageSystem* system, UserSystem* user_system) {
     }
 
     // 显示该用户的包裹信息
+    printf("----------------------------------------\n");
     printf("\n用户 %s 的包裹：\n", username);
-    printf("包裹ID\t描述\t\t状态\n");
+    printf("包裹ID\t描述\t\t\t状态\n");
     int found = 0;
     PackageNode* current = system->head;
     while (current != NULL) {
@@ -1293,9 +1298,223 @@ void displayPackageDetails(PackageNode* current) {
     }
     printf("----------------------------------------\n");
 }
-void handleCleanInvalidPackageNode(PackageSystem* system){
-
+void showUselessPackageList(PackageSystem* system) {
+    if (system == NULL) {
+        printf("系统未初始化\n");
+        return;
+    }
+    printf("----------------------------------------\n");
+    printf("\n=========== 清理无效包裹记录 =============\n");
+    printf("包裹ID\t\t状态\t\t存在天数\t\t所属用户\n");
+    PackageNode* current = system->head;
+    bool found = false;  // 标记是否找到无用包裹记录
+    while (current != NULL) {
+        if (current->status == PICKED_UP || current->status == DELIVERED ||
+            current->status == CLEANED || current->status == ABNORMAL ||
+            current->status == PICKED_BY_OTHER) {
+            found = true;
+            // 陈列包裹相关信息
+            printf("%d\t\t%s\t\t%d\t\t\t%s\n", current->package_id,
+                   packageSatatusToString(current->status),
+                   (int)(time(NULL) - current->store_time) / ONE_DAY,
+                   current->username);
+        }
+        current = current->next;
+    }
+    printf("----------------------------------------\n");
+    // 如果没找到无用包裹记录
+    if (!found) {
+        printf("当前没有无效包裹记录\n");
+        printf("----------------------------------------\n");
+    }
 }
-void cleanInvalidPackageNode(PackageSystem* system){
-    
+void showCleanUselessPackageMenu(PackageSystem* system) {
+    if (system == NULL) {
+        printf("系统未初始化\n");
+        return;
+    }
+    printf("\n----------------可选的操作----------------\n");
+    printf("1. 按照包裹状态删除包裹记录\n");
+    printf("2. 按照指定存在天数删除包裹记录\n");
+    printf("3. 删除全部无效包裹记录\n");
+    printf("0. 返回主菜单\n");
+    printf("----------------------------------------\n");
+    printf("请选择操作: ");
+}
+void handleCleanInvalidPackageNode(PackageSystem* system) {
+    int choice = -1;  // 给一个安全的非0初值
+    while (choice != 0) {
+        showUselessPackageList(system);
+        showCleanUselessPackageMenu(system);
+        choice = getValidatedIntegerInput(0, 3, 1);
+        switch (choice) {
+            case 1:
+                pauseAndClearConsole(0);
+                cleanInvalidPackageNodeByStatus(system);
+                pauseAndClearConsole(1);
+                break;
+            case 2:
+                pauseAndClearConsole(0);
+                cleanInvalidPackageNodeByDays(system);
+                pauseAndClearConsole(1);
+                break;
+            case 3:
+                pauseAndClearConsole(0);
+                cleanAllInvalidPackageNode(system);
+                pauseAndClearConsole(1);
+                break;
+            case 0:
+                return;
+            default:
+                printf("无效选择，请重试。\n");
+                break;
+        }
+    }
+}
+void cleanInvalidPackageNodeByStatus(PackageSystem* system) {
+    showUselessPackageList(system);
+    printf("----------------------------------------\n");
+    printf("请输入要删除的包裹的状态（1-5）：\n");
+    printf("1. 已取出\n");
+    printf("2. 已寄出\n");
+    printf("3. 已清理\n");
+    printf("4. 异常\n");
+    printf("5. 已被代取\n");
+    printf("0. 返回主菜单\n");
+    printf("----------------------------------------\n");
+    printf("请选择操作: ");
+    int choice = getValidatedIntegerInput(0, 5, 1);
+    switch (choice) {
+        case 1:
+            pauseAndClearConsole(0);
+            removePackagesByStatus(system, PICKED_UP);
+            break;
+        case 2:
+            pauseAndClearConsole(0);
+            removePackagesByStatus(system, DELIVERED);
+            break;
+        case 3:
+            pauseAndClearConsole(0);
+            removePackagesByStatus(system, CLEANED);
+            break;
+        case 4:
+            pauseAndClearConsole(0);
+            removePackagesByStatus(system, ABNORMAL);
+            break;
+        case 5:
+            pauseAndClearConsole(0);
+            removePackagesByStatus(system, PICKED_BY_OTHER);
+            break;
+        case 0:
+            return;
+        default:
+            printf("无效选择，请重试。\n");
+            break;
+    }
+}
+void removePackagesByStatus(PackageSystem* system, PackageStatus status) {
+    if (system == NULL) {
+        printf("系统未初始化\n");
+        return;
+    }
+
+    PackageNode* current = system->head;
+    PackageNode* prev = NULL;
+
+    while (current != NULL) {
+        if (current->status == status) {
+            printf("删除包裹ID: %d, 状态: %s\n", current->package_id,
+                   packageSatatusToString(current->status));
+            // 从链表中删除包裹
+            if (prev == NULL) {
+                system->head = current->next;
+            } else {
+                prev->next = current->next;
+            }
+            PackageNode* temp = current;
+            current = current->next;
+            free(temp);
+        } else {
+            prev = current;
+            current = current->next;
+        }
+    }
+    if (!savePackagesToFile(system, PACKAGE_FILE)) {
+        printf("保存包裹信息失败\n");
+    } else {
+        printf("删除操作已保存到文件。\n");
+    }
+}
+void removePackagesByDays(PackageSystem* system, int days) {
+    if (system == NULL) {
+        printf("系统未初始化\n");
+        return;
+    }
+
+    PackageNode* current = system->head;
+    PackageNode* prev = NULL;
+    bool found = false;
+    while (current != NULL) {
+        if ((time(NULL) - current->store_time) >= days * ONE_DAY) {
+            found = true;
+            printf("删除包裹ID: %d, 状态: %s\n", current->package_id,
+                   packageSatatusToString(current->status));
+            // 从链表中删除包裹
+            if (prev == NULL) {
+                system->head = current->next;
+            } else {
+                prev->next = current->next;
+            }
+            PackageNode* temp = current;
+            current = current->next;
+            free(temp);
+        } else {
+            prev = current;
+            current = current->next;
+        }
+    }
+    // 如果输入天数太大，找不到对应的包裹，提示用户
+    if (found == false) {
+        printf("没有找到超过 %d 天的包裹\n", days);
+    }
+    if (!savePackagesToFile(system, PACKAGE_FILE)) {
+        printf("保存包裹信息失败\n");
+    } else {
+        printf("操作已保存到文件。\n");
+    }
+}
+void cleanInvalidPackageNodeByDays(PackageSystem* system) {
+    if (system == NULL) {
+        printf("系统未初始化\n");
+        return;
+    }
+    printf("----------------------------------------\n");
+    printf("请输入要删除的包裹的存在天数(输入0返回)：\n");
+    int choice = getValidatedIntegerInput(1, 10000, 1);
+    if (choice == 0) {
+        return;
+    }
+    removePackagesByDays(system, choice);
+    printf("----------------------------------------\n");
+}
+void cleanAllInvalidPackageNode(PackageSystem* system) {
+    if (system == NULL) {
+        printf("系统未初始化\n");
+        return;
+    }
+    printf("----------------------------------------\n");
+    printf("确认要删除所有无效包裹记录吗？(y/n)\n");
+    printf("此操作不可恢复！\n");
+    char choice = getValidatedCharInput("ynYN");
+    if (choice == 'y' || choice == 'Y') {
+        removePackagesByStatus(system, PICKED_UP);
+        removePackagesByStatus(system, DELIVERED);
+        removePackagesByStatus(system, CLEANED);
+        removePackagesByStatus(system, ABNORMAL);
+        removePackagesByStatus(system, PICKED_BY_OTHER);
+        printf("所有无效包裹记录已删除\n");
+    } else {
+        printf("删除操作已取消\n");
+        return;
+    }
 }

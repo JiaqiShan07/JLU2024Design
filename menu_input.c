@@ -51,8 +51,17 @@ void handleUserInput(PackageSystem* system, UserSystem* user_system) {
             return;
         }
         displayMainMenu(user_system);
-        choice = getValidatedIntegerInput(
-            0, 17, 1);  // 第三个参数为1代表可以例外的输入0
+        // 分不同类型用户限制不同的菜单输入范围保证安全
+        if(current_user_type == USER_ADMIN){
+            choice = getValidatedIntegerInput(
+                0, 18, 1);  // 第三个参数为1代表可以例外的输入0
+        }else if(current_user_type == USER_COURIER){
+            choice = getValidatedIntegerInput(
+                0, 13, 1);  // 第三个参数为1代表可以例外的输入0 
+        }else{
+            choice = getValidatedIntegerInput(
+                0, 11, 1);  // 第三个参数为1代表可以例外的输入0
+        }
         switch (choice) {
             case 1:
                 pauseAndClearConsole(0);
@@ -202,6 +211,13 @@ void handleUserInput(PackageSystem* system, UserSystem* user_system) {
                     displayFeedbackList(system);
                 } else {
                     printf("无效的选择，请重试\n");
+                }
+                pauseAndClearConsole(1);
+                break;
+            case 18:
+                pauseAndClearConsole(0);
+                if (current_user_type == USER_ADMIN) {
+                   handleCleanInvalidPackageNode(system); 
                 }
                 pauseAndClearConsole(1);
                 break;

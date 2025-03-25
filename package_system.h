@@ -62,5 +62,17 @@ void pickupPackageByOther(PackageSystem* system,
                           UserNode* current);
 // 清理无效包裹结点的交互函数
 void handleCleanInvalidPackageNode(PackageSystem* system);
-// 清理无效包裹结点的核心功能函数
-void cleanInvalidPackageNode(PackageSystem* system);
+// 清理无效包裹结点的核心功能函数（根据状态）
+void cleanInvalidPackageNodeByStatus(PackageSystem* system);
+// 清理无效包裹结点的核心功能函数（根据存在时间）
+void cleanInvalidPackageNodeByDays(PackageSystem* system);
+// 展示无用包裹列表
+void showUselessPackageList(PackageSystem* system);
+// 展示清理无用包裹的菜单
+void showCleanUselessPackageMenu(PackageSystem* system);
+// 根据状态从链表移除指定的包裹(随即同步文件)链表操作函数
+void removePackagesByStatus(PackageSystem* system, PackageStatus status);
+// 根据存在时间从链表移除指定的包裹(随即同步文件)链表操作函数
+void removePackagesByDays(PackageSystem* system, int days);
+// 删除所有的无效包裹记录（操作链表随机同步文件）
+void cleanAllInvalidPackageNode(PackageSystem* system);

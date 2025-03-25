@@ -56,6 +56,7 @@ void displayMainMenu(UserSystem* user_system) {
             printf("15. 注册快递员账户\n");
             printf("16. 打开货架管理系统\n");
             printf("17. 处理用户反馈信息\n");
+            printf("18. 处理无用包裹记录\n");
         }
     }
     printf(" 0. 退出登录\n");

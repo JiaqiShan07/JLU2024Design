@@ -3,7 +3,7 @@
 #include "all_h_files.h"
 #define MAX_PACKAGES 100
 // 系统支持的最大包裹数由货架系统计算得到
-#define MAX_NAME_LENGTH 50         // 名称的最大长度
+#define MAX_NAME_LENGTH 10         // 名称的最大长度
 #define MAX_USERNAME_LENGTH 50     // 用户名的最大长度
 #define MAX_PICKUP_CODE_LENGTH 20  // 取件码的最大长度
 #define MAX_ADDRESS_LENGTH 1000    // 地址的最大长度

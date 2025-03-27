@@ -30,8 +30,20 @@ int main() {
         printf("保存包裹数据失败\n");
     }
     // 释放系统资源
-    free(user_system);
-    free(package_system);
+   //freeUserSystem(user_system);
+    //freePackageSystem(package_system);
+    PackageNode* curr = package_system->head;
+    while (curr != NULL) {
+        PackageNode* next = curr->next;
+        free(curr);
+        curr = curr->next;
+    }
+    UserNode*curr1 = user_system->head;
+    while (curr1!= NULL) {
+        UserNode* next = curr1->next;
+        free(curr1);
+        curr1 = curr1->next;
+    }
     printf("\t-----------------\n");
     printf("\t感谢使用，再见！\n");
     printf("\t-----------------\n");

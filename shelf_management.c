@@ -54,7 +54,7 @@ int updateShelfStatus(ShelfSystem* shelf_system,
     while (package != NULL) {
         // 只统计未寄出和未取出和滞留的包裹
         if (package->status != PICKED_UP && package->status != DELIVERED &&
-            package->status != STRANDED) {
+            package->status != CLEANED&& package->status != PICKED_BY_OTHER) {
             // 检查包裹位置信息的有效性
             if (package->shelf_number >= 0 &&
                 package->shelf_number <= SHELF_COUNT &&

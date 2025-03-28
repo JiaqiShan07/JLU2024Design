@@ -59,7 +59,9 @@ typedef struct PackageNode {
     time_t pickup_time;                        // 取件时间戳
     time_t sent_time;                          // 派送时间戳
     int stranded_time;                         // 滞留时间(天)
-    struct PackageNode* next;                  // 指向下一个包裹节点的指针
+    float stranded_fee;            // 实际缴纳的滞留费用（-1为未缴纳）
+    time_t pay_stranded_fee_time;  // 实际缴纳滞留费用的时间
+    struct PackageNode* next;      // 指向下一个包裹节点的指针
 } PackageNode;
 // 包裹系统结构体，管理所有包裹节点
 typedef struct {

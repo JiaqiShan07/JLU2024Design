@@ -153,7 +153,8 @@ int addPackage(PackageSystem* system,
     new_node->shelf_number = -1;
     new_node->layer_number = -1;
     new_node->pickup_name[0] = '\0';
-
+    new_node->stranded_fee = -1;
+    new_node->pay_stranded_fee_time = 0;
     int shelf_number, layer_number;
     // 随机生成并检查位置是否已满
     if (!generatePackageLocation(system, new_node, &shelf_number,
@@ -294,6 +295,8 @@ int pickupPackage(PackageSystem* system, int package_id) {
                 if (confirm == 'y' || confirm == 'Y') {
                     current->status = PICKED_UP;
                     current->pickup_time = time(NULL);  // 记录取件时间
+                    current->pay_stranded_fee_time = time(NULL);//记录付款成功的时间
+                    current->stranded_fee = stranded_fee;//记录实际缴纳费用
                     strcpy(current->pickup_name,
                            current->username);  // 记录取件人姓名
                     printf("滞留包裹取件成功\n");

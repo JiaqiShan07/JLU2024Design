@@ -793,19 +793,19 @@ int packagewater(UserSystem* user_system, PackageSystem* system) {
                 node->delivery_fee);
             printf("----------------------------------------\n");
         }
-        else if (node->status == STRANDED) {
-            int stranded_days = node->stranded_time;
-            float stranded_fee = stranded_days * 1.5f;
+        else if (node->status == PICKED_UP&&node->stranded_fee!=-1) {
+            //为实际缴纳了滞留费用的
+            float stranded_fee = node->stranded_fee;
             struct tm* timeinfo;
             char buffer[80];
             // 将时间转换为本地时间
-            timeinfo = localtime(&node->store_time);
+            timeinfo = localtime(&node->pay_stranded_fee_time);
             // 格式化时间
             strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", timeinfo);
-            totalpackage = totalpackage + node->delivery_fee;
+            totalpackage = totalpackage + node->stranded_fee;
             printf("----------------------------------------\n");
-            printf("时间: %s\n用户%s包裹滞留缴费%.2f元\n", buffer, node->username,
-                node->delivery_fee);
+            printf("时间: %s\n用户%s包裹滞留缴费%.2f元\n", buffer,
+                   node->username, node->stranded_fee);
             printf("----------------------------------------\n");
         }
         node = node->next;

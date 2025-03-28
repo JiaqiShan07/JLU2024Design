@@ -25,8 +25,9 @@ typedef struct {
     FeedbackNode* head;    // 反馈链表头节点
     int next_feedback_id;  // 下一个可用的反馈ID（初始为1000）
 } FeedbackSystem;
-// 处理用户反馈的主要函数，允许用户提交和管理反馈信息
-void handleFeedback(PackageSystem* package_system, UserSystem* user_system);
+// 处理用户反馈的主要函数，允许用户提交和管理反馈信息,返回零值退出
+int handleFeedbackMenuInput(PackageSystem* package_system,
+                                     UserSystem* user_system);
 // 处理用户与智能助手的交互，提供自动化的客服支持
 void handleContactSmartAssistant(PackageSystem* package_system,
                                  UserSystem* user_system);

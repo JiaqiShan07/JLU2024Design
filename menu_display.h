@@ -16,4 +16,6 @@ void displayFriendMenu(UserSystem* user_system);
 void displayShelfMenu(UserSystem* user_system, PackageSystem* package_system);
 // 展示管理员日志系统的菜单界面，包括查看日志和清空日志等功能
 void displayAdminLogMenu();
+// 展示反馈系统的菜单界面，包括查看反馈信息和回复反馈等功能
+void displayFeedbackMenu();
 #endif

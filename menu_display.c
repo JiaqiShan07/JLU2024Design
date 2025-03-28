@@ -119,3 +119,12 @@ void displayAdminLogMenu() {
     printf("----------------------------------------\n");
     printf("请选择 (0-3): ");
 }
+void displayFeedbackMenu(){
+    printf("\n----------------------------------------\n");
+    printf("反馈系统\n");
+    printf("1. 提交新反馈\n");
+    printf("2. 查看我的反馈\n");
+    printf("0. 返回主菜单\n");
+    printf("----------------------------------------\n");
+    printf("请选择操作: ");
+}

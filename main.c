@@ -32,10 +32,10 @@ int main() {
     // 释放系统资源
    //freeUserSystem(user_system);
     //freePackageSystem(package_system);
-    PackageNode* curr = package_system->head;
-    while (curr != NULL) {
-        PackageNode* tmp = curr;
-        curr = curr->next;
+    PackageNode* curr0 = package_system->head;
+    while (curr0 != NULL) {
+        PackageNode* tmp = curr0;
+        curr0 = curr0->next;
         free(tmp);
     }
     UserNode*curr1 = user_system->head;

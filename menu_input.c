@@ -89,7 +89,10 @@ void handleMainMenuInput(PackageSystem* system, UserSystem* user_system) {
 
             case 5:
                 pauseAndClearConsole(0);
-                handleFeedback(system, user_system);
+                // 循环展示子菜单
+                do {
+                    displayFeedbackMenu();
+                } while (handleFeedbackMenuInput(system, user_system));
                 pauseAndClearConsole(1);
                 break;
 
@@ -120,7 +123,7 @@ void handleMainMenuInput(PackageSystem* system, UserSystem* user_system) {
                 pauseAndClearConsole(0);
                 do {
                     displayFriendMenu(user_system);
-                } while (!handleFriendMenuInput(user_system));
+                } while (handleFriendMenuInput(user_system));
                 pauseAndClearConsole(1);
                 break;
             case 10:
@@ -310,33 +313,33 @@ int handleFriendMenuInput(UserSystem* user_system) {
             pauseAndClearConsole(0);
             handleAddFriends(user_system);
             pauseAndClearConsole(1);
-            return 0;
+            return 1;
 
         case 2:
             pauseAndClearConsole(0);
             handleViewFriends(user_system);
             pauseAndClearConsole(1);
-            return 0;
+            return 1;
 
         case 3:
             pauseAndClearConsole(0);
             handleRemoveFriends(user_system);
             pauseAndClearConsole(1);
-            return 0;
+            return 1;
 
         case 4:
             pauseAndClearConsole(0);
             handleViewInviteCode(user_system);
             pauseAndClearConsole(1);
-            return 0;
+            return 1;
 
         case 0:
-            return 1;
+            return 0;
 
         default:
             printf("无效的选择，请重试\n");
             pauseAndClearConsole(1);
-            return 0;
+            return 1;
     }
 }
 // 返回值为零代表用户退出该级菜单，返回值为1代表用户未退出该级菜单

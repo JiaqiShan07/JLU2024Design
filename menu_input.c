@@ -89,47 +89,47 @@ void handleMainMenuInput(PackageSystem* system, UserSystem* user_system) {
 
             case 5:
                 pauseAndClearConsole(0);
-                // 循环展示子菜单
                 do {
-                    displayFeedbackMenu();
-                } while (handleFeedbackMenuInput(system, user_system));
+                    displayFriendMenu(user_system);
+                } while (!handleFriendMenuInput(user_system));
                 pauseAndClearConsole(1);
                 break;
 
             case 6:
                 pauseAndClearConsole(0);
-                handleContactSmartAssistant(system, user_system);
+                handlePickupPackageByOther(system, user_system);
                 pauseAndClearConsole(1);
                 break;
 
             case 7:
                 pauseAndClearConsole(0);
-                handleChangePassword(user_system);
+                do{
+                    displayFeedbackMenu();
+                } while (handleFeedbackMenuInput(system, user_system));
                 pauseAndClearConsole(1);
                 break;
             case 8:
+                pauseAndClearConsole(0);
+                handleContactSmartAssistant(system, user_system);
+                pauseAndClearConsole(1);
+                break;
+            case 9:
+                pauseAndClearConsole(0);
+                handleChangePassword(user_system);
+                pauseAndClearConsole(1);
+                break;
+            case 10:
                 pauseAndClearConsole(0);
                 if (handleDeleteUserAccount(user_system, system)) {
                     printf("账户已注销，即将返回登录菜单...\n");
                     Sleep(3000);
                     pauseAndClearConsole(0);
                     return;
-                } else {
+                }
+                else {
                     printf("账户注销失败\n");
                     pauseAndClearConsole(1);
                 }
-                break;
-            case 9:
-                pauseAndClearConsole(0);
-                do {
-                    displayFriendMenu(user_system);
-                } while (handleFriendMenuInput(user_system));
-                pauseAndClearConsole(1);
-                break;
-            case 10:
-                pauseAndClearConsole(0);
-                handlePickupPackageByOther(system, user_system);
-                pauseAndClearConsole(1);
                 break;
 
             case 11:
@@ -168,18 +168,10 @@ void handleMainMenuInput(PackageSystem* system, UserSystem* user_system) {
             case 14:
                 pauseAndClearConsole(0);
                 if (current_user_type == USER_ADMIN) {
-                    if (handleClearSystemData(system, user_system)) {
-                        printf("系统数据已清空，即将返回登录菜单...\n");
-                        Sleep(3000);
-                        pauseAndClearConsole(0);
-                        return;
-                    }
-                } else {
-                    printf("无效的选择，请重试\n");
+                    handleCleanInvalidPackageNode(system);
                 }
                 pauseAndClearConsole(1);
                 break;
-
             case 15:
                 pauseAndClearConsole(0);
                 if (current_user_type == USER_ADMIN) {
@@ -221,7 +213,15 @@ void handleMainMenuInput(PackageSystem* system, UserSystem* user_system) {
             case 18:
                 pauseAndClearConsole(0);
                 if (current_user_type == USER_ADMIN) {
-                    handleCleanInvalidPackageNode(system);
+                    if (handleClearSystemData(system, user_system)) {
+                        printf("系统数据已清空，即将返回登录菜单...\n");
+                        Sleep(3000);
+                        pauseAndClearConsole(0);
+                        return;
+                    }
+                }
+                else {
+                    printf("无效的选择，请重试\n");
                 }
                 pauseAndClearConsole(1);
                 break;
@@ -313,33 +313,33 @@ int handleFriendMenuInput(UserSystem* user_system) {
             pauseAndClearConsole(0);
             handleAddFriends(user_system);
             pauseAndClearConsole(1);
-            return 1;
+            return 0;
 
         case 2:
             pauseAndClearConsole(0);
             handleViewFriends(user_system);
             pauseAndClearConsole(1);
-            return 1;
+            return 0;
 
         case 3:
             pauseAndClearConsole(0);
             handleRemoveFriends(user_system);
             pauseAndClearConsole(1);
-            return 1;
+            return 0;
 
         case 4:
             pauseAndClearConsole(0);
             handleViewInviteCode(user_system);
             pauseAndClearConsole(1);
-            return 1;
+            return 0;
 
         case 0:
-            return 0;
+            return 1;
 
         default:
             printf("无效的选择，请重试\n");
             pauseAndClearConsole(1);
-            return 1;
+            return 0;
     }
 }
 // 返回值为零代表用户退出该级菜单，返回值为1代表用户未退出该级菜单

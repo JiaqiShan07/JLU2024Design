@@ -71,10 +71,13 @@ void showNotificationPENDING_PICKUPDetails(UserSystem* user_system,
         }
         user = user->next;
     }
+   
     if (user->type == USER_ADMIN || user->type == USER_COURIER) {
+        int count = 0;
         PackageNode* current = package_system->head;
         while (current!=NULL) {
             if (current->status == PENDING_PICKUP) {
+                count++;
                 printf("----------------------------------------\n");
                 printf("包裹编号: %d\n", current->package_id);
                 printf("状态: %s\n", packageSatatusToString(current->status));
@@ -85,12 +88,17 @@ void showNotificationPENDING_PICKUPDetails(UserSystem* user_system,
                 printf("----------------------------------------\n");
             }
             current = current->next;
+        }
+        if(count==0) {
+            printf("没有待取件包裹\n"); 
         }
     }
     else {
+        int count = 0;
         PackageNode* current = package_system->head;
         while (current != NULL) {
             if (strcmp(current->username, user->username) == 0 && current->status == PENDING_PICKUP) {
+                count++;
                 printf("----------------------------------------\n");
                 printf("包裹编号: %d\n", current->package_id);
                 printf("状态: %s\n", packageSatatusToString(current->status));
@@ -102,6 +110,9 @@ void showNotificationPENDING_PICKUPDetails(UserSystem* user_system,
             }
             current = current->next;
         }
+        if(count==0) {
+            printf("没有待取件包裹!\n");
+         }
     }
 }
 void showNotificationPENDING_DELIVERYDetails(UserSystem* user_system,
@@ -120,9 +131,11 @@ void showNotificationPENDING_DELIVERYDetails(UserSystem* user_system,
         user = user->next;
     }
     if (user->type == USER_ADMIN || user->type == USER_COURIER) {
+        int count = 0;
         PackageNode* current = package_system->head;
         while (current != NULL) {
             if (current->status == PENDING_DELIVERY) {
+                count++;
                 printf("----------------------------------------\n");
                 printf("包裹编号: %d\n", current->package_id);
                 printf("状态: %s\n", packageSatatusToString(current->status));
@@ -134,12 +147,17 @@ void showNotificationPENDING_DELIVERYDetails(UserSystem* user_system,
             }
             current = current->next;
         }
+        if(count==0) {
+            printf("没有待取件包裹!\n"); 
+        }
     }
     else {
+        int count = 0;
         PackageNode* current = package_system->head;
         while (current != NULL) {
             if (strcmp(current->username, user->username) == 0
                 && current->status == PENDING_DELIVERY) {
+                count++;
                 printf("----------------------------------------\n");
                 printf("包裹编号: %d\n", current->package_id);
                 printf("状态: %s\n", packageSatatusToString(current->status));
@@ -150,6 +168,9 @@ void showNotificationPENDING_DELIVERYDetails(UserSystem* user_system,
                 printf("----------------------------------------\n");
             }
             current = current->next;
+        }
+        if(count==0) {
+            printf("没有待寄出包裹!\n");
         }
     }
 }
@@ -169,9 +190,11 @@ void showNotificationABNORMALDetails(UserSystem* user_system,
         user = user->next;
     }
     if (user->type == USER_ADMIN || user->type == USER_COURIER) {
+        int count = 0;
         PackageNode* current = package_system->head;
         while (current != NULL) {
             if (current->status == ABNORMAL) {
+                count++;
                 printf("----------------------------------------\n");
                 printf("包裹编号: %d\n", current->package_id);
                 printf("状态: %s\n", packageSatatusToString(current->status));
@@ -183,12 +206,17 @@ void showNotificationABNORMALDetails(UserSystem* user_system,
             }
             current = current->next;
         }
+        if(count==0) {
+            printf("没有待取件包裹!\n");  
+        }
     }
     else {
+        int count = 0;
         PackageNode* current = package_system->head;
         while (current != NULL) {
             if (strcmp(current->username, user->username) == 0
                 && current->status == ABNORMAL) {
+                count++;
                 printf("----------------------------------------\n");
                 printf("包裹编号: %d\n", current->package_id);
                 printf("状态: %s\n", packageSatatusToString(current->status));
@@ -200,6 +228,9 @@ void showNotificationABNORMALDetails(UserSystem* user_system,
             }
             current = current->next;
         }
+        if(count==0) {
+            printf("没有异常包裹!\n");
+         }
     }
 }
 void showNotificationSTRANDEDDetails(UserSystem* user_system,
@@ -218,9 +249,11 @@ void showNotificationSTRANDEDDetails(UserSystem* user_system,
         user = user->next;
     }
     if (user->type == USER_ADMIN || user->type == USER_COURIER) {
+        int count = 0;
         PackageNode* current = package_system->head;
         while (current != NULL) {
             if (current->status == STRANDED) {
+                count++;
                 printf("----------------------------------------\n");
                 printf("包裹编号: %d\n", current->package_id);
                 printf("状态: %s\n", packageSatatusToString(current->status));
@@ -234,10 +267,12 @@ void showNotificationSTRANDEDDetails(UserSystem* user_system,
         }
     }
     else {
+        int count = 0;
         PackageNode* current = package_system->head;
         while (current != NULL) {
             if (strcmp(current->username, user->username) == 0
                 && current->status == STRANDED) {
+                count++;
                 printf("----------------------------------------\n");
                 printf("包裹编号: %d\n", current->package_id);
                 printf("状态: %s\n", packageSatatusToString(current->status));
@@ -248,6 +283,9 @@ void showNotificationSTRANDEDDetails(UserSystem* user_system,
                 printf("----------------------------------------\n");
             }
             current = current->next;
+        }
+        if(count==0) {
+            printf("没有滞留包裹!\n");
         }
     }
 }
@@ -267,9 +305,11 @@ void showNotificationREJECTEDDetails(UserSystem* user_system,
         user = user->next;
     }
     if (user->type == USER_ADMIN || user->type == USER_COURIER) {
+        int count = 0;
         PackageNode* current = package_system->head;
         while (current != NULL) {
             if (current->status == REJECTED) {
+                count++;
                 printf("----------------------------------------\n");
                 printf("包裹编号: %d\n", current->package_id);
                 printf("状态: %s\n", packageSatatusToString(current->status));
@@ -283,10 +323,12 @@ void showNotificationREJECTEDDetails(UserSystem* user_system,
         }
     }
     else {
+        int count = 0;
         PackageNode* current = package_system->head;
         while (current != NULL) {
             if (strcmp(current->username, user->username) == 0
                 && current->status == REJECTED) {
+                count++;
                 printf("----------------------------------------\n");
                 printf("包裹编号: %d\n", current->package_id);
                 printf("状态: %s\n", packageSatatusToString(current->status));
@@ -297,6 +339,9 @@ void showNotificationREJECTEDDetails(UserSystem* user_system,
                 printf("----------------------------------------\n");
             }
             current = current->next;
+        }
+        if(count==0) {
+            printf("没有被拒收包裹!\n"); 
         }
     }
 }

@@ -66,7 +66,7 @@ void displayMainMenu(UserSystem* user_system) {
             printf("16. 打开货架管理系统\n");
             printf("17. 处理用户反馈信息\n");
             printf("18. 清除系统数据\n");
-            printf("19. 查看管理员日志\n");
+            printf("19. 查看系统流水日志\n");
             printf("----------------------------------------\n");
         }
     }
@@ -129,7 +129,7 @@ void displayAdminLogMenu() {
     printf("-------------流水日志菜单-----------------\n");
     printf("请选择您要查看的流水项目:\n");
     printf("1.用户充值VIP流水\n");
-    printf("2.用户寄包裹流水\n");
+    printf("2.用户包裹费用流水\n");
     printf("3.管理员浏览流水记录\n");
     printf("0.返回\n");
     printf("----------------------------------------\n");

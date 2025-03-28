@@ -14,5 +14,6 @@ void displayNotificationMenu(UserSystem* user_system,
 void displayFriendMenu(UserSystem* user_system);
 // 显示货架管理菜单界面，展示货架使用状态和包裹存储情况
 void displayShelfMenu(UserSystem* user_system, PackageSystem* package_system);
-
+// 展示管理员日志系统的菜单界面，包括查看日志和清空日志等功能
+void displayAdminLogMenu();
 #endif

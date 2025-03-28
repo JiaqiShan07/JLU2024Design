@@ -64,7 +64,7 @@ void handleUpgradeVIP(UserSystem* user_system);
 // 升级VIP的核心函数
 int upgradeVIP(UserSystem* user_system);
 //添加管理员日志的用户交互函数
-void handleadmindiary(UserSystem* user_system, PackageSystem*system);
+int handleadmindiary(UserSystem* user_system, PackageSystem*system);
 //记录VIP流水函数
 int VIPwater(UserSystem* user_system);
 //记录用户寄包裹流水函数

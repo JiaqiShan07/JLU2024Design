@@ -106,3 +106,14 @@ void displayShelfMenu(UserSystem* user_system, PackageSystem* package_system) {
     printf("5号货架专门放置贵重包裹");
     printf("\n----------------------------------------\n");
 }
+//展示管理员日志子系统的菜单
+void displayAdminLogMenu() {
+    printf("----------------------------------------\n");
+    printf("请选择您要查看的流水项目:\n");
+    printf("1.用户充值VIP流水\n");
+    printf("2.用户寄包裹流水\n");
+    printf("3.管理员浏览流水记录\n");
+    printf("0.返回\n");
+    printf("----------------------------------------\n");
+    printf("请选择 (0-3): ");
+}

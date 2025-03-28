@@ -34,15 +34,15 @@ int main() {
     //freePackageSystem(package_system);
     PackageNode* curr = package_system->head;
     while (curr != NULL) {
-        PackageNode* next = curr->next;
-        free(curr);
+        PackageNode* tmp = curr;
         curr = curr->next;
+        free(tmp);
     }
     UserNode*curr1 = user_system->head;
     while (curr1!= NULL) {
-        UserNode* next = curr1->next;
-        free(curr1);
+       UserNode* tmp = curr1;
         curr1 = curr1->next;
+        free(tmp);
     }
     printf("\t-----------------\n");
     printf("\t感谢使用，再见！\n");

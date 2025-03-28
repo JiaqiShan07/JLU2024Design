@@ -739,7 +739,8 @@ int VIPwater(UserSystem* user_system) {
             timeinfo = localtime(&current->VIPtime);
             // 格式化时间
             strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", timeinfo);
-            printf("时间: %s,用户%s充值成为VIP，并支付年费200元\n", buffer, current->username);}
+            printf("----------------------------------------\n");
+            printf("时间: %s\n用户%s充值成为VIP，并支付年费200元\n", buffer, current->username);}
         current = current->next;
     }
     if (!saveUsersToFile(user_system, USER_FILE)) {
@@ -768,7 +769,8 @@ int packagewater(UserSystem* user_system, PackageSystem* system) {
         timeinfo = localtime(&node->store_time);
         // 格式化时间
         strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", timeinfo);
-        printf("时间: %s,用户%s寄包裹消费%.2f元\n", buffer, node->username,node->delivery_fee);
+        printf("----------------------------------------\n");
+        printf("时间: %s\n用户%s寄包裹消费%.2f元\n", buffer, node->username,node->delivery_fee);
         node = node->next;
     }
     current->looktime[current->searchcount] = time(NULL);
@@ -781,17 +783,10 @@ int packagewater(UserSystem* user_system, PackageSystem* system) {
     }
     return 1;
 }
-void handleadmindiary(UserSystem* user_system, PackageSystem* system) {
+//返回值为零代表用户退出该级菜单，返回值为1代表用户未退出该级菜单
+int handleadmindiary(UserSystem* user_system, PackageSystem* system) {
     int choicenum;
     int temp=0;
-    printf("----------------------------------------\n");
-    printf("请选择您要查看的流水项目:\n");
-    printf("1.用户充值VIP流水\n");
-    printf("2.用户寄包裹流水\n");
-    printf("3.管理员浏览流水记录\n");
-    printf("0.返回\n");
-    printf("----------------------------------------\n");
-    printf("请选择 (0-3): ");
     choicenum = getValidatedIntegerInput(0, 3, 1);
     char current_user[MAX_USERNAME_LENGTH];
     strcpy(current_user, user_system->current_username);
@@ -805,22 +800,21 @@ void handleadmindiary(UserSystem* user_system, PackageSystem* system) {
     }
     if (choicenum == 0) {
         printf("用户返回\n");
-        return;
+        return 0;
     }
-    choicenum--;
-    int i = 0, j = 0;
     switch (choicenum) {
-    case 0:
+    case 1:
         pauseAndClearConsole(0);
         VIPwater(user_system);
         pauseAndClearConsole(1);
         break;
-    case 1:
+    case 2:
         pauseAndClearConsole(0);
         packagewater(user_system, system);
         pauseAndClearConsole(1);
         break;
-    case 2:
+    case 3:
+        pauseAndClearConsole(0);
         while (current->adminchoice[temp] != 0) {
             if (current->adminchoice[temp] == 1) {
                 struct tm* timeinfo;
@@ -829,7 +823,8 @@ void handleadmindiary(UserSystem* user_system, PackageSystem* system) {
                 timeinfo = localtime(&current->looktime[temp]);
                 // 格式化时间
                 strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", timeinfo);
-                printf("时间: %s,管理员%s查看了用户充值VIP流水\n", buffer, current->username);
+                printf("----------------------------------------\n");
+                printf("时间: %s\n管理员%s查看了用户充值VIP流水\n", buffer, current->username);
                 temp++;
             }
             else if (current->adminchoice[temp] == -1) {
@@ -839,16 +834,18 @@ void handleadmindiary(UserSystem* user_system, PackageSystem* system) {
                 timeinfo = localtime(&current->looktime[temp]);
                 // 格式化时间
                 strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", timeinfo);
-                printf("时间: %s,管理员%s查看了用户寄包裹流水\n", buffer, current->username);
+                printf("----------------------------------------\n");
+                printf("时间: %s\n管理员%s查看了用户寄包裹流水\n", buffer, current->username);
                 temp++;
             }
         }
-            break;
+        pauseAndClearConsole(1);
+        break;
     default:
         printf("无效的选择，请重试\n");
         pauseAndClearConsole(1);
         break;
         }
-
+        return 1;
     
 }

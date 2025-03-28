@@ -224,7 +224,9 @@ void handleUserInput(PackageSystem* system, UserSystem* user_system) {
             case 19:
                 pauseAndClearConsole(0);
                 if (current_user_type == USER_ADMIN) {
-                    handleadmindiary(user_system,system);
+                    do{
+                        displayAdminLogMenu();
+                    } while (handleadmindiary(user_system, system));
                 }
                 else {
                     printf("无效的选择，请重试\n");

@@ -798,10 +798,6 @@ int handleadmindiary(UserSystem* user_system, PackageSystem* system) {
         }
         current = current->next;
     }
-    if (choicenum == 0) {
-        printf("用户返回\n");
-        return 0;
-    }
     switch (choicenum) {
     case 1:
         pauseAndClearConsole(0);
@@ -841,11 +837,14 @@ int handleadmindiary(UserSystem* user_system, PackageSystem* system) {
         }
         pauseAndClearConsole(1);
         break;
+    case 0:
+        printf("用户返回\n");
+        //返回0退出
+        return 0;
     default:
         printf("无效的选择，请重试\n");
         pauseAndClearConsole(1);
         break;
         }
         return 1;
-    
 }

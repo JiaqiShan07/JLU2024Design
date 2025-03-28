@@ -712,6 +712,7 @@ void handleUpgradeVIP(UserSystem* user_system) {
     }
 }
 int VIPwater(UserSystem* user_system) {
+    int totalVIP=0;
     char current_user[MAX_USERNAME_LENGTH];
     strcpy(current_user, user_system->current_username);
     UserNode* current1 = user_system->head;
@@ -736,6 +737,7 @@ int VIPwater(UserSystem* user_system) {
             timeinfo = localtime(&current->VIPtime);
             // 格式化时间
             strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", timeinfo);
+            totalVIP += 200;
             printf("----------------------------------------\n");
             printf("时间: %s\n用户%s充值成为VIP，并支付年费200元\n", buffer,
                    current->username);
@@ -743,6 +745,17 @@ int VIPwater(UserSystem* user_system) {
         }
         current = current->next;
     }
+    time_t t = time(NULL);
+    struct tm* timeinfo;
+    char buffer[80];
+    // 将时间转换为本地时间
+    timeinfo = localtime(&t);
+    // 格式化时间
+    strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", timeinfo);
+    
+    printf("----------------------------------------\n");
+    printf("截至%s\n用户充值成为VIP用户总流水为%d元\n", buffer, totalVIP);
+    printf("----------------------------------------\n");
     if (!saveUsersToFile(user_system, USER_FILE)) {
         printf("失败\n");
         return 0;
@@ -750,6 +763,7 @@ int VIPwater(UserSystem* user_system) {
     return 1;
 }
 int packagewater(UserSystem* user_system, PackageSystem* system) {
+    float totalpackage=0;
     char current_user[MAX_USERNAME_LENGTH];
     strcpy(current_user, user_system->current_username);
     UserNode* current = user_system->head;
@@ -769,12 +783,25 @@ int packagewater(UserSystem* user_system, PackageSystem* system) {
         timeinfo = localtime(&node->store_time);
         // 格式化时间
         strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", timeinfo);
+        totalpackage = totalpackage + node->delivery_fee;
         printf("----------------------------------------\n");
         printf("时间: %s\n用户%s寄包裹消费%.2f元\n", buffer, node->username,
                node->delivery_fee);
         printf("----------------------------------------\n");
         node = node->next;
     }
+    time_t t = time(NULL);
+    struct tm* timeinfo;
+    char buffer[80];
+    // 将时间转换为本地时间
+    timeinfo = localtime(&t);
+    // 格式化时间
+    strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", timeinfo);
+   
+    printf("----------------------------------------\n");
+    printf("截至%s\n用户充值成为VIP用户总流水为%.2f元\n", buffer, totalpackage);
+    printf("----------------------------------------\n");
+    
     current->looktime[current->searchcount] = time(NULL);
     current->adminchoice[current->searchcount] = -1;
     current->adminchoice[current->searchcount + 1] = 0;

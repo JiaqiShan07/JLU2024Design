@@ -27,8 +27,11 @@ static const KeywordResponse AUTO_RESPONSES[] = {
      "我们的快递服务时间为每天8:00-22:00，请在此时间段内进行取件和寄件操作。"},
     {"丢失",
      "如果您的快递出现丢失情况，请立即联系管理员或提交反馈，我们会优先处理。"},
-    {"VIP", "如需成为VIP用户，请进入主菜单寻找选项。"},
-    {"vip", "如需成为VIP用户，请进入主菜单寻找选项。"}};
+    {"VIP",
+     "如需成为VIP用户，请进入主菜单寻找选项。"},
+    {"vip",
+     "如需成为VIP用户，请进入主菜单寻找选项。"}
+};
 
 // 初始化反馈系统
 static FeedbackSystem* initFeedbackSystem() {
@@ -116,82 +119,82 @@ int handleFeedbackMenuInput(PackageSystem* package_system,
         return 0;
     }
     int choice=getValidatedIntegerInput(0, 2, 1);
-    switch (choice) {
-        case 1: {
-            printf("\n请输入反馈内容（最多%d字符）:\n",
-                   MAX_FEEDBACK_LENGTH - 1);
-            char feedback_content[MAX_FEEDBACK_LENGTH];
-            getValidatedStringInput(feedback_content, MAX_FEEDBACK_LENGTH);
+        switch (choice) {
+            case 1: {
+                printf("\n请输入反馈内容（最多%d字符）:\n",
+                       MAX_FEEDBACK_LENGTH - 1);
+                char feedback_content[MAX_FEEDBACK_LENGTH];
+                getValidatedStringInput(feedback_content, MAX_FEEDBACK_LENGTH);
 
-            FeedbackNode* new_feedback =
-                (FeedbackNode*)malloc(sizeof(FeedbackNode));
-            if (new_feedback == NULL) {
-                printf("内存分配失败\n");
+                FeedbackNode* new_feedback =
+                    (FeedbackNode*)malloc(sizeof(FeedbackNode));
+                if (new_feedback == NULL) {
+                    printf("内存分配失败\n");
+                    break;
+                }
+
+                new_feedback->feedback_id = feedback_system->next_feedback_id++;
+                strncpy(new_feedback->username, username,
+                        sizeof(new_feedback->username));
+                strncpy(new_feedback->content, feedback_content,
+                        sizeof(new_feedback->content));
+                new_feedback->status = FEEDBACK_PENDING;
+                new_feedback->submit_time = time(NULL);
+                new_feedback->next = feedback_system->head;
+                feedback_system->head = new_feedback;
+
+                if (saveFeedbackToFile(feedback_system)) {
+                    printf("----------------------------------------\n");
+                    printf("反馈提交成功！反馈ID：%04d\n",
+                           new_feedback->feedback_id);
+                } else {
+                    printf("反馈保存失败\n");
+                }
+                pauseAndClearConsole(1);
                 break;
             }
 
-            new_feedback->feedback_id = feedback_system->next_feedback_id++;
-            strncpy(new_feedback->username, username,
-                    sizeof(new_feedback->username));
-            strncpy(new_feedback->content, feedback_content,
-                    sizeof(new_feedback->content));
-            new_feedback->status = FEEDBACK_PENDING;
-            new_feedback->submit_time = time(NULL);
-            new_feedback->next = feedback_system->head;
-            feedback_system->head = new_feedback;
-
-            if (saveFeedbackToFile(feedback_system)) {
+            case 2: {
+                printf("\n您的反馈记录：\n");
                 printf("----------------------------------------\n");
-                printf("反馈提交成功！反馈ID：%04d\n",
-                       new_feedback->feedback_id);
-            } else {
-                printf("反馈保存失败\n");
-            }
-            pauseAndClearConsole(1);
-            break;
-        }
+                int found = 0;
+                FeedbackNode* current = feedback_system->head;
 
-        case 2: {
-            printf("\n您的反馈记录：\n");
-            printf("----------------------------------------\n");
-            int found = 0;
-            FeedbackNode* current = feedback_system->head;
+                while (current != NULL) {
+                    if (strcmp(current->username, username) == 0) {
+                        found = 1;
+                        printf("反馈ID: %04d\n", current->feedback_id);
+                        printf("内容: %s\n", current->content);
+                        outputFeedbackStatus(current);
+                        printf("提交时间: %s", ctime(&current->submit_time));
+                        printf("----------------------------------------\n");
+                    }
+                    current = current->next;
+                }
 
-            while (current != NULL) {
-                if (strcmp(current->username, username) == 0) {
-                    found = 1;
-                    printf("反馈ID: %04d\n", current->feedback_id);
-                    printf("内容: %s\n", current->content);
-                    outputFeedbackStatus(current);
-                    printf("提交时间: %s", ctime(&current->submit_time));
+                if (!found) {
+                    printf("----------------------------------------\n");
+                    printf("暂无反馈记录\n");
                     printf("----------------------------------------\n");
                 }
-                current = current->next;
+                pauseAndClearConsole(1);
+                break;
             }
 
-            if (!found) {
+            case 0:
                 printf("----------------------------------------\n");
-                printf("暂无反馈记录\n");
+                printf("返回主菜单\n");
                 printf("----------------------------------------\n");
-            }
-            pauseAndClearConsole(1);
-            break;
-        }
-
-        case 0:
-            printf("----------------------------------------\n");
-            printf("返回主菜单\n");
-            printf("----------------------------------------\n");
 
             return 0;
-            break;
+                break;
 
-        default:
-            printf("----------------------------------------\n");
-            printf("无效的选择，请重试\n");
-            printf("----------------------------------------\n");
-            break;
-    }
+            default:
+                printf("----------------------------------------\n");
+                printf("无效的选择，请重试\n");
+                printf("----------------------------------------\n");
+                break;
+        }
     // 清理反馈系统
     FeedbackNode* current_feedback = feedback_system->head;
     while (current_feedback != NULL) {

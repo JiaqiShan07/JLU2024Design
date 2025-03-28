@@ -16,8 +16,8 @@ typedef struct UserNode {
     struct UserNode* next;                           // 指向下一个用户节点的指针
     time_t VIPtime;                                  // 用户成为VIP时间
     time_t looktime[MAX_USERS];  // 管理员查看交易流水记录
-    int adminchoice[MAX_USERS];
-    int searchcount;
+    int adminchoice[MAX_USERS];//记录管理员每次的选项
+    int searchcount;//辅助变量
 } UserNode;
 typedef struct {
     UserNode* head;                              // 用户链表的头指针

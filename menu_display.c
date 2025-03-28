@@ -14,7 +14,6 @@ void displayLoginMenu() {
 void displayMainMenu(UserSystem* user_system) {
     // 获取当前用户类型
     UserType current_user_type;
-
     UserNode* current = user_system->head;
     while (current != NULL) {
         if (strcmp(current->username, user_system->current_username) == 0) {
@@ -23,10 +22,10 @@ void displayMainMenu(UserSystem* user_system) {
         }
         current = current->next;
     }
-
     // 显示菜单选项
     printf("\n----------------------------------------");
     printf("\n快递管理系统\n");
+    printf("----------------------------------------\n");
     if (current_user_type == USER_ADMIN || current_user_type == USER_COURIER) {
         printf(" 1. 入库包裹\n");
     } else {
@@ -42,18 +41,21 @@ void displayMainMenu(UserSystem* user_system) {
     printf(" 8. 注销当前用户\n");
     printf(" 9. 好友系统\n");
     printf("10. 代取好友包裹\n");
+    
     if ((current_user_type != USER_ADMIN) &&
         (current_user_type != USER_COURIER) &&
         (current_user_type != USER_VIP)) {
         printf("11. 升级成为VIP\n");
     }
     // 管理员和快递员可见的额外选项
+    printf("----------------------------------------\n");
     if (current_user_type == USER_ADMIN || current_user_type == USER_COURIER) {
         printf("11. 包裹寄出\n");
         printf("12. 标记异常包裹\n");
         printf("13. 处理滞留包裹\n");
         // 仅管理员可见的选项
         if (current_user_type == USER_ADMIN) {
+            printf("----------------------------------------\n");
             printf("14. 清空系统数据\n");
             printf("15. 注册快递员账户\n");
             printf("16. 打开货架管理系统\n");

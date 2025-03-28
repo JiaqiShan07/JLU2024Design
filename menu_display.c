@@ -42,7 +42,7 @@ void displayMainMenu(UserSystem* user_system) {
     printf("---------------个人管理系统--------------\n");
     printf(" 9. 修改账户密码\n");
     printf("10. 账户注销\n");
-    //除VIP用户可见的其他选项
+    // 除VIP用户可见的其他选项
     if ((current_user_type != USER_ADMIN) &&
         (current_user_type != USER_COURIER) &&
         (current_user_type != USER_VIP)) {
@@ -84,6 +84,18 @@ void displayNotificationMenu(UserSystem* user_system,
     printf("请选择操作: ");
     printf("\n----------------------------------------\n");
 }
+void displaysecondNotificationMenu(UserSystem* user_system,
+                                   PackageSystem* package_system) {
+    printf("\n-------------分类通知详情--------------\n");
+    printf("1. 取件通知\n");
+    printf("2. 待寄出通知\n");
+    printf("3. 异常通知\n");
+    printf("4. 滞留通知\n");
+    printf("5. 拒收通知\n");
+    printf("0. 退出通知详情\n");
+    printf("----------------------------------------\n");
+    printf("请选择操作: ");
+}
 
 void displayFriendMenu(UserSystem* user_system) {
     printf("------------------好友系统-----------------\n");
@@ -123,7 +135,7 @@ void displayAdminLogMenu() {
     printf("----------------------------------------\n");
     printf("请选择 (0-3): ");
 }
-void displayFeedbackMenu(){
+void displayFeedbackMenu() {
     printf("\n----------------------------------------\n");
     printf("反馈系统\n");
     printf("1. 提交新反馈\n");

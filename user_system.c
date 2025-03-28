@@ -760,7 +760,7 @@ int VIPwater(UserSystem* user_system) {
     printf("截至%s\n用户充值成为VIP用户总流水为%d元\n", buffer, totalVIP);
     printf("----------------------------------------\n");
     if (!saveUsersToFile(user_system, USER_FILE)) {
-        printf("失败\n");
+        printf("保存文件失败\n");
         return 0;
     }
     return 1;
@@ -780,17 +780,34 @@ int packagewater(UserSystem* user_system, PackageSystem* system) {
     PackageNode* node;
     node = system->head;
     while (node != NULL) {
-        struct tm* timeinfo;
-        char buffer[80];
-        // 将时间转换为本地时间
-        timeinfo = localtime(&node->store_time);
-        // 格式化时间
-        strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", timeinfo);
-        totalpackage = totalpackage + node->delivery_fee;
-        printf("----------------------------------------\n");
-        printf("时间: %s\n用户%s寄包裹消费%.2f元\n", buffer, node->username,
-               node->delivery_fee);
-        printf("----------------------------------------\n");
+        if (node->status == PENDING_DELIVERY || node->status == DELIVERED) {
+            struct tm* timeinfo;
+            char buffer[80];
+            // 将时间转换为本地时间
+            timeinfo = localtime(&node->store_time);
+            // 格式化时间
+            strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", timeinfo);
+            totalpackage = totalpackage + node->delivery_fee;
+            printf("----------------------------------------\n");
+            printf("时间: %s\n用户%s寄包裹消费%.2f元\n", buffer, node->username,
+                node->delivery_fee);
+            printf("----------------------------------------\n");
+        }
+        else if (node->status == STRANDED) {
+            int stranded_days = node->stranded_time;
+            float stranded_fee = stranded_days * 1.5f;
+            struct tm* timeinfo;
+            char buffer[80];
+            // 将时间转换为本地时间
+            timeinfo = localtime(&node->store_time);
+            // 格式化时间
+            strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", timeinfo);
+            totalpackage = totalpackage + node->delivery_fee;
+            printf("----------------------------------------\n");
+            printf("时间: %s\n用户%s包裹滞留缴费%.2f元\n", buffer, node->username,
+                node->delivery_fee);
+            printf("----------------------------------------\n");
+        }
         node = node->next;
     }
     time_t t = time(NULL);
@@ -802,7 +819,7 @@ int packagewater(UserSystem* user_system, PackageSystem* system) {
     strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", timeinfo);
    
     printf("----------------------------------------\n");
-    printf("截至%s\n用户充值成为VIP用户总流水为%.2f元\n", buffer, totalpackage);
+    printf("截至%s\n用户寄取快递总流水为%.2f元\n", buffer, totalpackage);
     printf("----------------------------------------\n");
     
     current->looktime[current->searchcount] = time(NULL);
@@ -810,7 +827,7 @@ int packagewater(UserSystem* user_system, PackageSystem* system) {
     current->adminchoice[current->searchcount + 1] = 0;
     current->searchcount++;
     if (!saveUsersToFile(user_system, USER_FILE)) {
-        printf("保存密码修改失败\n");
+        printf("保存文件失败\n");
         return 0;
     }
     return 1;

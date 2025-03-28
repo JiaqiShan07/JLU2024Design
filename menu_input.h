@@ -20,4 +20,6 @@ int handleShelfMenuInput(PackageSystem* system,
                          ShelfSystem* shelf_system);
 // 处理管理员日志菜单的输入
 int handleAdminLogMenuInput(UserSystem* user_system, PackageSystem* system);
+int handlesecondNotificationMenuInput(UserSystem* user_system,
+                                      PackageSystem* package_system);
 #endif  // INPUT_MANAGEMENT_H

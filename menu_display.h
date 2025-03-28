@@ -18,4 +18,7 @@ void displayShelfMenu(UserSystem* user_system, PackageSystem* package_system);
 void displayAdminLogMenu();
 // 展示反馈系统的菜单界面，包括查看反馈信息和回复反馈等功能
 void displayFeedbackMenu();
+// 展示二级通知菜单
+void displaysecondNotificationMenu(UserSystem* user_system,
+                                   PackageSystem* package_system);
 #endif

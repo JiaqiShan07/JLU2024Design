@@ -56,119 +56,247 @@ void showNotificationCount(UserSystem* user_system,
  * - 普通用户：仅显示与自己相关的待取件、待投递、异常、拒收和滞留包裹的详细信息
  *   包括：包裹编号、状态、取件码和存储位置
  */
-void showNotificationDetails(UserSystem* user_system,
+void showNotificationPENDING_PICKUPDetails(UserSystem* user_system,
                              PackageSystem* package_system) {
     if (user_system == NULL || package_system == NULL) {
         printf("系统未初始化\n");
         return;
     }
-    UserType user_type = USER_NORMAL;
     char username[MAX_USERNAME_LENGTH];
     UserNode* user = user_system->head;
+    strncpy(username, user->username, MAX_USERNAME_LENGTH);
     while (user != NULL) {
         if (strcmp(user->username, user_system->current_username) == 0) {
-            user_type = user->type;
-            strncpy(username, user->username, MAX_USERNAME_LENGTH);
             break;
         }
         user = user->next;
     }
-
-    printf("\n通知详情：\n");
-    printf("----------------------------------------\n");
-
-    PackageNode* current = package_system->head;
-    int found = 0;
-    int displayed = 0;
-    int page = 1;
-
-    do {
-        current = package_system->head;
-        displayed = 0;
-        int skip = (page - 1) * 5;
-        int skipped = 0;
-
-        while (current != NULL && displayed < 5) {
-            int should_display = 0;
-            if (user_type == USER_ADMIN || user_type == USER_COURIER) {
-                should_display = (current->status == PENDING_PICKUP ||
-                                  current->status == PENDING_DELIVERY ||
-                                  current->status == ABNORMAL ||
-                                  current->status == REJECTED ||
-                                  current->status == STRANDED);
-            } else {
-                should_display = (strcmp(current->username, username) == 0 &&
-                                  (current->status == PENDING_PICKUP ||
-                                   current->status == PENDING_DELIVERY ||
-                                   current->status == ABNORMAL ||
-                                   current->status == REJECTED ||
-                                   current->status == STRANDED));
-            }
-            if (should_display) {
-                if (skipped < skip) {
-                    skipped++;
-                } else {
-                    found = 1;
-                    displayed++;
-                    printf("包裹编号: %d\n", current->package_id);
-                    printf("状态: %s\n",
-                           packageSatatusToString(current->status));
-                    if (user_type == USER_ADMIN || user_type == USER_COURIER) {
-                        printf("所属用户: %s\n", current->username);
-                    }
-                    printf("取件码: %s\n", current->pickup_code);
-                    printf("存放位置: %s 第%d层\n",
-                           switchShelfNumToString(current->shelf_number),
-                           current->layer_number);
-                    printf("----------------------------------------\n");
-                }
+    if (user->type == USER_ADMIN || user->type == USER_COURIER) {
+        PackageNode* current = package_system->head;
+        while (current!=NULL) {
+            if (current->status == PENDING_PICKUP) {
+                printf("----------------------------------------\n");
+                printf("包裹编号: %d\n", current->package_id);
+                printf("状态: %s\n", packageSatatusToString(current->status));
+                printf("所属用户: %s\n", current->username);
+                printf("取件码: %s\n", current->pickup_code);
+                printf("存放位置: %s 第%d层\n", switchShelfNumToString(current->shelf_number),
+                    current->layer_number);
+                printf("----------------------------------------\n");
             }
             current = current->next;
         }
-
-        if (!found && page == 1) {
-            printf("没有需要显示的通知\n");
-            printf("----------------------------------------\n");
-            break;
-        }
-
-        // 检查是否还有更多通知
-        int has_more = 0;
+    }
+    else {
+        PackageNode* current = package_system->head;
         while (current != NULL) {
-            int should_display = 0;
-            if (user_type == USER_ADMIN || user_type == USER_COURIER) {
-                should_display = (current->status == PENDING_PICKUP ||
-                                  current->status == PENDING_DELIVERY ||
-                                  current->status == ABNORMAL ||
-                                  current->status == REJECTED ||
-                                  current->status == STRANDED);
-            } else {
-                should_display = (strcmp(current->username, username) == 0 &&
-                                  (current->status == PENDING_PICKUP ||
-                                   current->status == PENDING_DELIVERY ||
-                                   current->status == ABNORMAL ||
-                                   current->status == REJECTED ||
-                                   current->status == STRANDED));
-            }
-            if (should_display) {
-                has_more = 1;
-                break;
+            if (strcmp(current->username, user->username) == 0 && current->status == PENDING_PICKUP) {
+                printf("----------------------------------------\n");
+                printf("包裹编号: %d\n", current->package_id);
+                printf("状态: %s\n", packageSatatusToString(current->status));
+                printf("所属用户: %s\n", current->username);
+                printf("取件码: %s\n", current->pickup_code);
+                printf("存放位置: %s 第%d层\n", switchShelfNumToString(current->shelf_number),
+                    current->layer_number);
+                printf("----------------------------------------\n");
             }
             current = current->next;
         }
-
-        if (has_more) {
-            printf("是否查看更多通知？(Y/N): ");
-            char choice;
-            scanf(" %c", &choice);
-            if (choice == 'Y' || choice == 'y') {
-                page++;
-                printf("\n");
-            } else {
-                break;
-            }
-        } else {
+    }
+}
+void showNotificationPENDING_DELIVERYDetails(UserSystem* user_system,
+    PackageSystem* package_system) {
+    if (user_system == NULL || package_system == NULL) {
+        printf("系统未初始化\n");
+        return;
+    }
+    char username[MAX_USERNAME_LENGTH];
+    UserNode* user = user_system->head;
+    strncpy(username, user->username, MAX_USERNAME_LENGTH);
+    while (user != NULL) {
+        if (strcmp(user->username, user_system->current_username) == 0) {
             break;
         }
-    } while (1);
+        user = user->next;
+    }
+    if (user->type == USER_ADMIN || user->type == USER_COURIER) {
+        PackageNode* current = package_system->head;
+        while (current != NULL) {
+            if (current->status == PENDING_DELIVERY) {
+                printf("----------------------------------------\n");
+                printf("包裹编号: %d\n", current->package_id);
+                printf("状态: %s\n", packageSatatusToString(current->status));
+                printf("所属用户: %s\n", current->username);
+                printf("取件码: %s\n", current->pickup_code);
+                printf("存放位置: %s 第%d层\n", switchShelfNumToString(current->shelf_number),
+                    current->layer_number);
+                printf("----------------------------------------\n");
+            }
+            current = current->next;
+        }
+    }
+    else {
+        PackageNode* current = package_system->head;
+        while (current != NULL) {
+            if (strcmp(current->username, user->username) == 0
+                && current->status == PENDING_DELIVERY) {
+                printf("----------------------------------------\n");
+                printf("包裹编号: %d\n", current->package_id);
+                printf("状态: %s\n", packageSatatusToString(current->status));
+                printf("所属用户: %s\n", current->username);
+                printf("取件码: %s\n", current->pickup_code);
+                printf("存放位置: %s 第%d层\n", switchShelfNumToString(current->shelf_number),
+                    current->layer_number);
+                printf("----------------------------------------\n");
+            }
+            current = current->next;
+        }
+    }
+}
+void showNotificationABNORMALDetails(UserSystem* user_system,
+    PackageSystem* package_system) {
+    if (user_system == NULL || package_system == NULL) {
+        printf("系统未初始化\n");
+        return;
+    }
+    char username[MAX_USERNAME_LENGTH];
+    UserNode* user = user_system->head;
+    strncpy(username, user->username, MAX_USERNAME_LENGTH);
+    while (user != NULL) {
+        if (strcmp(user->username, user_system->current_username) == 0) {
+            break;
+        }
+        user = user->next;
+    }
+    if (user->type == USER_ADMIN || user->type == USER_COURIER) {
+        PackageNode* current = package_system->head;
+        while (current != NULL) {
+            if (current->status == ABNORMAL) {
+                printf("----------------------------------------\n");
+                printf("包裹编号: %d\n", current->package_id);
+                printf("状态: %s\n", packageSatatusToString(current->status));
+                printf("所属用户: %s\n", current->username);
+                printf("取件码: %s\n", current->pickup_code);
+                printf("存放位置: %s 第%d层\n", switchShelfNumToString(current->shelf_number),
+                    current->layer_number);
+                printf("----------------------------------------\n");
+            }
+            current = current->next;
+        }
+    }
+    else {
+        PackageNode* current = package_system->head;
+        while (current != NULL) {
+            if (strcmp(current->username, user->username) == 0
+                && current->status == ABNORMAL) {
+                printf("----------------------------------------\n");
+                printf("包裹编号: %d\n", current->package_id);
+                printf("状态: %s\n", packageSatatusToString(current->status));
+                printf("所属用户: %s\n", current->username);
+                printf("取件码: %s\n", current->pickup_code);
+                printf("存放位置: %s 第%d层\n", switchShelfNumToString(current->shelf_number),
+                    current->layer_number);
+                printf("----------------------------------------\n");
+            }
+            current = current->next;
+        }
+    }
+}
+void showNotificationSTRANDEDDetails(UserSystem* user_system,
+    PackageSystem* package_system) {
+    if (user_system == NULL || package_system == NULL) {
+        printf("系统未初始化\n");
+        return;
+    }
+    char username[MAX_USERNAME_LENGTH];
+    UserNode* user = user_system->head;
+    strncpy(username, user->username, MAX_USERNAME_LENGTH);
+    while (user != NULL) {
+        if (strcmp(user->username, user_system->current_username) == 0) {
+            break;
+        }
+        user = user->next;
+    }
+    if (user->type == USER_ADMIN || user->type == USER_COURIER) {
+        PackageNode* current = package_system->head;
+        while (current != NULL) {
+            if (current->status == STRANDED) {
+                printf("----------------------------------------\n");
+                printf("包裹编号: %d\n", current->package_id);
+                printf("状态: %s\n", packageSatatusToString(current->status));
+                printf("所属用户: %s\n", current->username);
+                printf("取件码: %s\n", current->pickup_code);
+                printf("存放位置: %s 第%d层\n", switchShelfNumToString(current->shelf_number),
+                    current->layer_number);
+                printf("----------------------------------------\n");
+            }
+            current = current->next;
+        }
+    }
+    else {
+        PackageNode* current = package_system->head;
+        while (current != NULL) {
+            if (strcmp(current->username, user->username) == 0
+                && current->status == STRANDED) {
+                printf("----------------------------------------\n");
+                printf("包裹编号: %d\n", current->package_id);
+                printf("状态: %s\n", packageSatatusToString(current->status));
+                printf("所属用户: %s\n", current->username);
+                printf("取件码: %s\n", current->pickup_code);
+                printf("存放位置: %s 第%d层\n", switchShelfNumToString(current->shelf_number),
+                    current->layer_number);
+                printf("----------------------------------------\n");
+            }
+            current = current->next;
+        }
+    }
+}
+void showNotificationREJECTEDDetails(UserSystem* user_system,
+    PackageSystem* package_system) {
+    if (user_system == NULL || package_system == NULL) {
+        printf("系统未初始化\n");
+        return;
+    }
+    char username[MAX_USERNAME_LENGTH];
+    UserNode* user = user_system->head;
+    strncpy(username, user->username, MAX_USERNAME_LENGTH);
+    while (user != NULL) {
+        if (strcmp(user->username, user_system->current_username) == 0) {
+            break;
+        }
+        user = user->next;
+    }
+    if (user->type == USER_ADMIN || user->type == USER_COURIER) {
+        PackageNode* current = package_system->head;
+        while (current != NULL) {
+            if (current->status == REJECTED) {
+                printf("----------------------------------------\n");
+                printf("包裹编号: %d\n", current->package_id);
+                printf("状态: %s\n", packageSatatusToString(current->status));
+                printf("所属用户: %s\n", current->username);
+                printf("取件码: %s\n", current->pickup_code);
+                printf("存放位置: %s 第%d层\n", switchShelfNumToString(current->shelf_number),
+                    current->layer_number);
+                printf("----------------------------------------\n");
+            }
+            current = current->next;
+        }
+    }
+    else {
+        PackageNode* current = package_system->head;
+        while (current != NULL) {
+            if (strcmp(current->username, user->username) == 0
+                && current->status == REJECTED) {
+                printf("----------------------------------------\n");
+                printf("包裹编号: %d\n", current->package_id);
+                printf("状态: %s\n", packageSatatusToString(current->status));
+                printf("所属用户: %s\n", current->username);
+                printf("取件码: %s\n", current->pickup_code);
+                printf("存放位置: %s 第%d层\n", switchShelfNumToString(current->shelf_number),
+                    current->layer_number);
+                printf("----------------------------------------\n");
+            }
+            current = current->next;
+        }
+    }
 }

@@ -257,8 +257,12 @@ int handleNotificationMenuInput(UserSystem* user_system,
     switch (choice) {
         case 1:
             pauseAndClearConsole(0);
-            showNotificationDetails(user_system, package_system);
-            pauseAndClearConsole(1);
+            do{
+                displaysecondNotificationMenu(user_system, package_system);
+            } while (!handlesecondNotificationMenuInput(user_system,
+                                                        package_system));
+
+                pauseAndClearConsole(1);
             return 0;
 
         case 2:
@@ -274,6 +278,45 @@ int handleNotificationMenuInput(UserSystem* user_system,
             printf("无效的选择，请重试\n");
             pauseAndClearConsole(1);
             return 0;
+    }
+}
+int handlesecondNotificationMenuInput(UserSystem* user_system,
+    PackageSystem* package_system) {
+    int choice = getValidatedIntegerInput(0, 5, 1);
+    switch (choice) {
+    case 1:
+        pauseAndClearConsole(0);
+        showNotificationPENDING_PICKUPDetails(user_system,package_system);
+        pauseAndClearConsole(1);
+        return 0;
+
+    case 2:
+        pauseAndClearConsole(0);
+        showNotificationPENDING_DELIVERYDetails(user_system, package_system);
+        pauseAndClearConsole(1);
+        return 0;
+    case 3:
+        pauseAndClearConsole(0);
+        showNotificationABNORMALDetails(user_system, package_system);
+        pauseAndClearConsole(1);
+        return 0;
+    case 4:
+        pauseAndClearConsole(0);
+        showNotificationSTRANDEDDetails(user_system, package_system);
+        pauseAndClearConsole(1);
+        return 0;
+    case 5:
+        pauseAndClearConsole(0);
+        showNotificationREJECTEDDetails(user_system, package_system);
+        pauseAndClearConsole(1);
+        return 0;
+    case 0:
+        return 1;
+
+    default:
+        printf("无效的选择，请重试\n");
+        pauseAndClearConsole(1);
+        return 0;
     }
 }
 int handleShelfMenuInput(PackageSystem* system,

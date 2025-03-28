@@ -27,12 +27,12 @@ void displayMainMenu(UserSystem* user_system) {
     // 显示菜单选项
     printf("\n----------------------------------------");
     printf("\n快递管理系统\n");
-    if (current_user_type == USER_ADMIN || current_user_type == USER_COURIER){
+    if (current_user_type == USER_ADMIN || current_user_type == USER_COURIER) {
         printf(" 1. 入库包裹\n");
-    }else{
+    } else {
         printf(" 1. 邮寄包裹\n");
     }
-        
+
     printf(" 2. 查询用户包裹\n");
     printf(" 3. 取出包裹\n");
     printf(" 4. 拒收包裹\n");
@@ -42,7 +42,9 @@ void displayMainMenu(UserSystem* user_system) {
     printf(" 8. 注销当前用户\n");
     printf(" 9. 好友系统\n");
     printf("10. 代取好友包裹\n");
-    if ((current_user_type !=USER_ADMIN) && (current_user_type != USER_COURIER )&& (current_user_type != USER_VIP)) {
+    if ((current_user_type != USER_ADMIN) &&
+        (current_user_type != USER_COURIER) &&
+        (current_user_type != USER_VIP)) {
         printf("11. 升级成为VIP\n");
     }
     // 管理员和快递员可见的额外选项
@@ -106,9 +108,9 @@ void displayShelfMenu(UserSystem* user_system, PackageSystem* package_system) {
     printf("5号货架专门放置贵重包裹");
     printf("\n----------------------------------------\n");
 }
-//展示管理员日志子系统的菜单
+// 展示管理员日志子系统的菜单
 void displayAdminLogMenu() {
-    printf("----------------------------------------\n");
+    printf("-------------流水日志菜单-----------------\n");
     printf("请选择您要查看的流水项目:\n");
     printf("1.用户充值VIP流水\n");
     printf("2.用户寄包裹流水\n");

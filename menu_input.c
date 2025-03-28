@@ -16,7 +16,7 @@ int handleLoginMenuInput(UserSystem* user_system,
                     !handleNotificationMenuInput(user_system, package_system));
 
                 if (user_system->is_login == true) {
-                    handleUserInput(package_system, user_system);
+                    handleMainMenuInput(package_system, user_system);
                 }
             }
             return 0;
@@ -29,7 +29,7 @@ int handleLoginMenuInput(UserSystem* user_system,
             return 0;
     }
 }
-void handleUserInput(PackageSystem* system, UserSystem* user_system) {
+void handleMainMenuInput(PackageSystem* system, UserSystem* user_system) {
     int choice;
     UserType current_user_type;
 
@@ -52,13 +52,13 @@ void handleUserInput(PackageSystem* system, UserSystem* user_system) {
         }
         displayMainMenu(user_system);
         // 分不同类型用户限制不同的菜单输入范围保证安全
-        if(current_user_type == USER_ADMIN){
+        if (current_user_type == USER_ADMIN) {
             choice = getValidatedIntegerInput(
                 0, 19, 1);  // 第三个参数为1代表可以例外的输入0
-        }else if(current_user_type == USER_COURIER){
+        } else if (current_user_type == USER_COURIER) {
             choice = getValidatedIntegerInput(
-                0, 13, 1);  // 第三个参数为1代表可以例外的输入0 
-        }else{
+                0, 13, 1);  // 第三个参数为1代表可以例外的输入0
+        } else {
             choice = getValidatedIntegerInput(
                 0, 11, 1);  // 第三个参数为1代表可以例外的输入0
         }
@@ -106,7 +106,7 @@ void handleUserInput(PackageSystem* system, UserSystem* user_system) {
                 break;
             case 8:
                 pauseAndClearConsole(0);
-                if (handleDeleteUserAccount(user_system,system)) {
+                if (handleDeleteUserAccount(user_system, system)) {
                     printf("账户已注销，即将返回登录菜单...\n");
                     Sleep(3000);
                     pauseAndClearConsole(0);
@@ -131,11 +131,12 @@ void handleUserInput(PackageSystem* system, UserSystem* user_system) {
 
             case 11:
                 pauseAndClearConsole(0);
-                if (current_user_type !=USER_ADMIN && current_user_type != USER_COURIER && current_user_type != USER_VIP) {
+                if (current_user_type != USER_ADMIN &&
+                    current_user_type != USER_COURIER &&
+                    current_user_type != USER_VIP) {
                     handleUpgradeVIP(user_system);
-                }
-                else if (current_user_type == USER_ADMIN ||
-                    current_user_type == USER_COURIER) {
+                } else if (current_user_type == USER_ADMIN ||
+                           current_user_type == USER_COURIER) {
                     handleDeliverPackage(system);
                 } else {
                     printf("无效的选择，请重试\n");
@@ -217,18 +218,17 @@ void handleUserInput(PackageSystem* system, UserSystem* user_system) {
             case 18:
                 pauseAndClearConsole(0);
                 if (current_user_type == USER_ADMIN) {
-                   handleCleanInvalidPackageNode(system); 
+                    handleCleanInvalidPackageNode(system);
                 }
                 pauseAndClearConsole(1);
                 break;
             case 19:
                 pauseAndClearConsole(0);
                 if (current_user_type == USER_ADMIN) {
-                    do{
+                    do {
                         displayAdminLogMenu();
-                    } while (handleadmindiary(user_system, system));
-                }
-                else {
+                    } while (handleAdminLogMenuInput(user_system, system));
+                } else {
                     printf("无效的选择，请重试\n");
                 }
                 pauseAndClearConsole(1);
@@ -338,4 +338,35 @@ int handleFriendMenuInput(UserSystem* user_system) {
             pauseAndClearConsole(1);
             return 0;
     }
+}
+// 返回值为零代表用户退出该级菜单，返回值为1代表用户未退出该级菜单
+int handleAdminLogMenuInput(UserSystem* user_system, PackageSystem* system) {
+    int choicenum;
+    choicenum = getValidatedIntegerInput(0, 3, 1);
+    switch (choicenum) {
+        case 1:
+            pauseAndClearConsole(0);
+            VIPwater(user_system);
+            pauseAndClearConsole(1);
+            break;
+        case 2:
+            pauseAndClearConsole(0);
+            packagewater(user_system, system);
+            pauseAndClearConsole(1);
+            break;
+        case 3:
+            pauseAndClearConsole(0);
+            handleAdminLookWaterLog(user_system, system);
+            pauseAndClearConsole(1);
+            break;
+        case 0:
+            printf("用户返回\n");
+            // 返回0退出
+            return 0;
+        default:
+            printf("无效的选择，请重试\n");
+            pauseAndClearConsole(1);
+            break;
+    }
+    return 1;
 }

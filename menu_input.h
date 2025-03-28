@@ -8,7 +8,7 @@
 int handleLoginMenuInput(UserSystem* user_system,
                          PackageSystem* package_system);
 // 处理主菜单的用户输入，根据用户类型提供不同的功能选项
-void handleUserInput(PackageSystem* system, UserSystem* user_system);
+void handleMainMenuInput(PackageSystem* system, UserSystem* user_system);
 // 处理通知菜单的用户输入，包括查看和处理包裹状态通知
 int handleNotificationMenuInput(UserSystem* user_system,
                                 PackageSystem* package_system);
@@ -18,4 +18,6 @@ int handleFriendMenuInput(UserSystem* user_system);
 int handleShelfMenuInput(PackageSystem* system,
                          UserSystem* user_system,
                          ShelfSystem* shelf_system);
+// 处理管理员日志菜单的输入
+int handleAdminLogMenuInput(UserSystem* user_system, PackageSystem* system);
 #endif  // INPUT_MANAGEMENT_H

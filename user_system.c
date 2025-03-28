@@ -651,8 +651,8 @@ int upgradeVIP(UserSystem* user_system) {
     char current_user[MAX_USERNAME_LENGTH];
     strcpy(current_user, user_system->current_username);
     UserNode* current = user_system->head;
-    //遍历链表找到对应的人
-    while (current!=NULL) {
+    // 遍历链表找到对应的人
+    while (current != NULL) {
         if (strcmp(current->username, current_user) == 0) {
             break;
         }
@@ -669,56 +669,53 @@ int upgradeVIP(UserSystem* user_system) {
     return 1;
 }
 void handleUpgradeVIP(UserSystem* user_system) {
-    //添加VIP板块，用户可自行选择是否成为VIP用户
-        char response;
-        // 显示欢迎信息
-        printf("欢迎注册！我们现在正在邀请客户成为 VIP 会员。\n");
-        // 显示 VIP 权益
-        printf("----------------------------------------\n");
-        printf("成为 VIP 会员，您可以享受以下权益：\n");
-        printf("1. 享受6折寄件优惠。\n");
-        printf("2. 预付费结算。\n");
-        printf("----------------------------------------\n");
-        // 询问用户是否愿意成为 VIP
-        printf("您是否愿意成为我们的 VIP 会员，并支付200元年费？(Y/N): ");
-        // 获取用户的响应
-        response = getValidatedCharInput("YNyn");
-        // 根据用户的响应给出相应的反馈
-            if (response == 'Y' || response == 'y') {
-                printf("支付成功！非常感谢您的支持，我们将为您办理 VIP 会员手续。\n");
-                if (!upgradeVIP(user_system)) {
-                    printf("保存信息失败！联系管理员处理！");
-                    return;
-                }
-            }
-            else if (response == 'N' || response == 'n') {
-                printf("没关系，如果您以后有兴趣，可以随时联系我们。\n");
-              
-            }
-            char current_user[MAX_USERNAME_LENGTH];
-            strcpy(current_user, user_system->current_username);
-            UserNode* current = user_system->head;
-            //遍历链表找到对应的人
-            while (current != NULL) {
-                if (strcmp(current->username, current_user) == 0) {
-                    break;
-                }
-                current = current->next;
-            }
-            
-            if (current->type == USER_VIP) {
-                printf("已成功记录您为 VIP 会员。\n");
-          
-            }
-        else {
-            printf("期待您以后成为我们的 VIP 会员。\n");
+    // 添加VIP板块，用户可自行选择是否成为VIP用户
+    char response;
+    // 显示欢迎信息
+    printf("欢迎注册！我们现在正在邀请客户成为 VIP 会员。\n");
+    // 显示 VIP 权益
+    printf("----------------------------------------\n");
+    printf("成为 VIP 会员，您可以享受以下权益：\n");
+    printf("1. 享受6折寄件优惠。\n");
+    printf("2. 预付费结算。\n");
+    printf("----------------------------------------\n");
+    // 询问用户是否愿意成为 VIP
+    printf("您是否愿意成为我们的 VIP 会员，并支付200元年费？(Y/N): ");
+    // 获取用户的响应
+    response = getValidatedCharInput("YNyn");
+    // 根据用户的响应给出相应的反馈
+    if (response == 'Y' || response == 'y') {
+        printf("支付成功！非常感谢您的支持，我们将为您办理 VIP 会员手续。\n");
+        if (!upgradeVIP(user_system)) {
+            printf("保存信息失败！联系管理员处理！");
+            return;
         }
+    } else if (response == 'N' || response == 'n') {
+        printf("没关系，如果您以后有兴趣，可以随时联系我们。\n");
+    }
+    char current_user[MAX_USERNAME_LENGTH];
+    strcpy(current_user, user_system->current_username);
+    UserNode* current = user_system->head;
+    // 遍历链表找到对应的人
+    while (current != NULL) {
+        if (strcmp(current->username, current_user) == 0) {
+            break;
+        }
+        current = current->next;
+    }
+
+    if (current->type == USER_VIP) {
+        printf("已成功记录您为 VIP 会员。\n");
+
+    } else {
+        printf("期待您以后成为我们的 VIP 会员。\n");
+    }
 }
 int VIPwater(UserSystem* user_system) {
     char current_user[MAX_USERNAME_LENGTH];
     strcpy(current_user, user_system->current_username);
     UserNode* current1 = user_system->head;
-    //遍历链表找到对应的人
+    // 遍历链表找到对应的人
     while (current1 != NULL) {
         if (strcmp(current1->username, current_user) == 0) {
             break;
@@ -730,9 +727,9 @@ int VIPwater(UserSystem* user_system) {
     current1->adminchoice[current1->searchcount + 1] = 0;
     current1->searchcount++;
     UserNode* current = user_system->head;
-    //遍历链表找到对应的人
-    while (current!= NULL) {
-        if (current->type==USER_VIP) {
+    // 遍历链表找到对应的人
+    while (current != NULL) {
+        if (current->type == USER_VIP) {
             struct tm* timeinfo;
             char buffer[80];
             // 将时间转换为本地时间
@@ -740,7 +737,10 @@ int VIPwater(UserSystem* user_system) {
             // 格式化时间
             strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", timeinfo);
             printf("----------------------------------------\n");
-            printf("时间: %s\n用户%s充值成为VIP，并支付年费200元\n", buffer, current->username);}
+            printf("时间: %s\n用户%s充值成为VIP，并支付年费200元\n", buffer,
+                   current->username);
+            printf("----------------------------------------\n");
+        }
         current = current->next;
     }
     if (!saveUsersToFile(user_system, USER_FILE)) {
@@ -753,7 +753,7 @@ int packagewater(UserSystem* user_system, PackageSystem* system) {
     char current_user[MAX_USERNAME_LENGTH];
     strcpy(current_user, user_system->current_username);
     UserNode* current = user_system->head;
-    //遍历链表找到对应的人
+    // 遍历链表找到对应的人
     while (current != NULL) {
         if (strcmp(current->username, current_user) == 0) {
             break;
@@ -762,7 +762,7 @@ int packagewater(UserSystem* user_system, PackageSystem* system) {
     }
     PackageNode* node;
     node = system->head;
-    while (node!= NULL) {
+    while (node != NULL) {
         struct tm* timeinfo;
         char buffer[80];
         // 将时间转换为本地时间
@@ -770,7 +770,9 @@ int packagewater(UserSystem* user_system, PackageSystem* system) {
         // 格式化时间
         strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", timeinfo);
         printf("----------------------------------------\n");
-        printf("时间: %s\n用户%s寄包裹消费%.2f元\n", buffer, node->username,node->delivery_fee);
+        printf("时间: %s\n用户%s寄包裹消费%.2f元\n", buffer, node->username,
+               node->delivery_fee);
+        printf("----------------------------------------\n");
         node = node->next;
     }
     current->looktime[current->searchcount] = time(NULL);
@@ -783,68 +785,42 @@ int packagewater(UserSystem* user_system, PackageSystem* system) {
     }
     return 1;
 }
-//返回值为零代表用户退出该级菜单，返回值为1代表用户未退出该级菜单
-int handleadmindiary(UserSystem* user_system, PackageSystem* system) {
-    int choicenum;
-    int temp=0;
-    choicenum = getValidatedIntegerInput(0, 3, 1);
-    char current_user[MAX_USERNAME_LENGTH];
-    strcpy(current_user, user_system->current_username);
+void handleAdminLookWaterLog(UserSystem* user_system, PackageSystem* system){
+    //遍历链表找到所有的管理员全部打印
     UserNode* current = user_system->head;
-    //遍历链表找到对应的人
-    while (current != NULL) {
-        if (strcmp(current->username, current_user) == 0) {
-            break;
-        }
+    while (current!= NULL) {
+        int temp = 0;
+        if (current->type == USER_ADMIN) {
+            while (current->adminchoice[temp] != 0) {
+                if (current->adminchoice[temp] == 1) {
+                    struct tm* timeinfo;
+                    char buffer[80];
+                    // 将时间转换为本地时间
+                    timeinfo = localtime(&current->looktime[temp]);
+                    // 格式化时间
+                    strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S",
+                             timeinfo);
+                    printf("----------------------------------------\n");
+                    printf("时间: %s\n管理员%s查看了用户充值VIP流水\n", buffer,
+                           current->username);
+                    printf("----------------------------------------\n");
+                    temp++;
+                } else if (current->adminchoice[temp] == -1) {
+                    struct tm* timeinfo;
+                    char buffer[80];
+                    // 将时间转换为本地时间
+                    timeinfo = localtime(&current->looktime[temp]);
+                    // 格式化时间
+                    strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S",
+                             timeinfo);
+                    printf("----------------------------------------\n");
+                    printf("时间: %s\n管理员%s查看了用户寄包裹流水\n", buffer,
+                           current->username);
+                    printf("----------------------------------------\n");
+                    temp++;
+                }
+            }
+        }  
         current = current->next;
     }
-    switch (choicenum) {
-    case 1:
-        pauseAndClearConsole(0);
-        VIPwater(user_system);
-        pauseAndClearConsole(1);
-        break;
-    case 2:
-        pauseAndClearConsole(0);
-        packagewater(user_system, system);
-        pauseAndClearConsole(1);
-        break;
-    case 3:
-        pauseAndClearConsole(0);
-        while (current->adminchoice[temp] != 0) {
-            if (current->adminchoice[temp] == 1) {
-                struct tm* timeinfo;
-                char buffer[80];
-                // 将时间转换为本地时间
-                timeinfo = localtime(&current->looktime[temp]);
-                // 格式化时间
-                strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", timeinfo);
-                printf("----------------------------------------\n");
-                printf("时间: %s\n管理员%s查看了用户充值VIP流水\n", buffer, current->username);
-                temp++;
-            }
-            else if (current->adminchoice[temp] == -1) {
-                struct tm* timeinfo;
-                char buffer[80];
-                // 将时间转换为本地时间
-                timeinfo = localtime(&current->looktime[temp]);
-                // 格式化时间
-                strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", timeinfo);
-                printf("----------------------------------------\n");
-                printf("时间: %s\n管理员%s查看了用户寄包裹流水\n", buffer, current->username);
-                temp++;
-            }
-        }
-        pauseAndClearConsole(1);
-        break;
-    case 0:
-        printf("用户返回\n");
-        //返回0退出
-        return 0;
-    default:
-        printf("无效的选择，请重试\n");
-        pauseAndClearConsole(1);
-        break;
-        }
-        return 1;
 }

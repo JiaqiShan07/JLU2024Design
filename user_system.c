@@ -151,6 +151,7 @@ char* registerUser(UserSystem* system,
     strcpy(new_node->invateCode, generateInviteCode());
     new_node->searchcount = 0;
     new_node->next = NULL;
+    new_node->VIPtime = time(NULL);
     // 将新节点添加到链表末尾
     if (system->head == NULL) {
         system->head = new_node;
@@ -581,7 +582,7 @@ void handleUserRegister(UserSystem* user_system) {
             return;
         }
         printf("支付成功！\n");
-        current->VIPtime = time(NULL);
+        
     } else if (type_choice == USER_ADMIN) {
         // 管理员需要验证管理员密钥
         char admin_key[50];

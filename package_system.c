@@ -821,7 +821,6 @@ int handleClearSystemData(PackageSystem* system, UserSystem* user_system) {
     char confirm;
     printf("-----------------------------------------------------\n");
     printf("警告: 此操作将清除所有用户和包裹以及反馈数据。继续吗？(y/n): ");
-    printf("-----------------------------------------------------\n");
     confirm = getValidatedCharInput("YNyn");
 
     if (confirm == 'y' || confirm == 'Y') {

@@ -14,6 +14,10 @@ typedef struct UserNode {
     char invateCode[10];                             // 邀请码[10]
     UserType type;                                   // 用户类型
     struct UserNode* next;                           // 指向下一个用户节点的指针
+    time_t VIPtime;//用户成为VIP时间
+    time_t looktime[MAX_USERS];//管理员查看交易流水记录
+    int adminchoice[MAX_USERS];
+    int searchcount;
 } UserNode;
 typedef struct {
     UserNode* head;                              // 用户链表的头指针
@@ -59,4 +63,10 @@ void handleCourierRegister(UserSystem* user_system);
 void handleUpgradeVIP(UserSystem* user_system);
 // 升级VIP的核心函数
 int upgradeVIP(UserSystem* user_system);
+//添加管理员日志的用户交互函数
+void handleadmindiary(UserSystem* user_system, PackageSystem*system);
+//记录VIP流水函数
+int VIPwater(UserSystem* user_system);
+//记录用户寄包裹流水函数
+int packagewater(UserSystem* user_system, PackageSystem* system);
 #endif

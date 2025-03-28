@@ -54,7 +54,7 @@ void handleUserInput(PackageSystem* system, UserSystem* user_system) {
         // 分不同类型用户限制不同的菜单输入范围保证安全
         if(current_user_type == USER_ADMIN){
             choice = getValidatedIntegerInput(
-                0, 18, 1);  // 第三个参数为1代表可以例外的输入0
+                0, 19, 1);  // 第三个参数为1代表可以例外的输入0
         }else if(current_user_type == USER_COURIER){
             choice = getValidatedIntegerInput(
                 0, 13, 1);  // 第三个参数为1代表可以例外的输入0 
@@ -218,6 +218,16 @@ void handleUserInput(PackageSystem* system, UserSystem* user_system) {
                 pauseAndClearConsole(0);
                 if (current_user_type == USER_ADMIN) {
                    handleCleanInvalidPackageNode(system); 
+                }
+                pauseAndClearConsole(1);
+                break;
+            case 19:
+                pauseAndClearConsole(0);
+                if (current_user_type == USER_ADMIN) {
+                    handleadmindiary(user_system,system);
+                }
+                else {
+                    printf("无效的选择，请重试\n");
                 }
                 pauseAndClearConsole(1);
                 break;

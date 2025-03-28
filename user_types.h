@@ -12,4 +12,10 @@ typedef enum {
 } UserType;
 static const char* USER_TYPE_NAMES[] = {"学生",     "教师",   "VIP用户",
                                         "普通用户", "管理员", "快递员"};
+typedef enum {
+    VIPnum,//用户充值VIP流水
+    packagenum,//寄包裹费用流水
+    adminsearch,//管理员浏览流水记录
+}diarytype;
+static const char* diarytypename[] = { "用户充值VIP流水","用户寄包裹费用流水","管理员浏览流水记录" };
 #endif  // USER_TYPES_H

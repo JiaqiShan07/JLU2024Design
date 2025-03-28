@@ -26,7 +26,7 @@ int loadUsersFromFile(UserSystem* system, const char* filename) {
         return 0;
     }
     // 以文本模式打开文件
-    FILE* file = fopen(filename, "rt");
+    FILE* file = fopen(filename, "rb");
     if (file == NULL) {
         return 0;
     }
@@ -90,7 +90,7 @@ int saveUsersToFile(UserSystem* system, const char* filename) {
     }
 
     // 以文本写模式打开文件
-    FILE* file = fopen(filename, "wt");
+    FILE* file = fopen(filename, "wb");
     if (file == NULL) {
         return 0;
     }
@@ -151,7 +151,9 @@ char* registerUser(UserSystem* system,
     strcpy(new_node->invateCode, generateInviteCode());
     new_node->searchcount = 0;
     new_node->next = NULL;
+    new_node->looktime[0] = -9999;
     new_node->VIPtime = time(NULL);
+    new_node->adminchoice[0] = -9999;
     // 将新节点添加到链表末尾
     if (system->head == NULL) {
         system->head = new_node;
@@ -233,7 +235,7 @@ void clearAllUsers(UserSystem* system) {
     system->is_login = false;
 
     // 清空数据文件
-    FILE* file = fopen(USER_FILE, "wt");
+    FILE* file = fopen(USER_FILE, "wb");
     if (file != NULL) {
         int count = 0;
         fwrite(&count, sizeof(int), 1, file);

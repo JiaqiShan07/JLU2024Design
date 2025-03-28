@@ -48,7 +48,7 @@ static int saveFeedbackToFile(FeedbackSystem* system) {
     if (system == NULL)
         return 0;
 
-    FILE* file = fopen(FEEDBACK_FILE, "wt");
+    FILE* file = fopen(FEEDBACK_FILE, "wb");
     if (file == NULL)
         return 0;
 
@@ -68,7 +68,7 @@ FeedbackSystem* loadFeedbackFromFile() {
     if (system == NULL)
         return NULL;
 
-    FILE* file = fopen(FEEDBACK_FILE, "rt");
+    FILE* file = fopen(FEEDBACK_FILE, "rb");
     if (file == NULL)
         return system;
 
@@ -384,7 +384,7 @@ void clearAllFeedback(FeedbackSystem* system) {
     }
     system->head = NULL;
     system->next_feedback_id = 1000;
-    FILE* file = fopen(FEEDBACK_FILE, "wt");
+    FILE* file = fopen(FEEDBACK_FILE, "wb");
     if (file != NULL) {
         int count = 0;
         fwrite(&count, sizeof(int), 1, file);

@@ -6,7 +6,7 @@ int loadPackagesFromFile(PackageSystem* system, const char* filename) {
         return 0;
     }
 
-    FILE* file = fopen(filename, "rt");
+    FILE* file = fopen(filename, "rb");
     if (file == NULL) {
         return 0;
     }
@@ -73,7 +73,7 @@ int savePackagesToFile(PackageSystem* system, const char* filename) {
         return 0;
     }
 
-    FILE* file = fopen(filename, "wt");
+    FILE* file = fopen(filename, "wb");
     if (file == NULL) {
         return 0;
     }
@@ -339,7 +339,7 @@ void clearAllPackages(PackageSystem* system) {
     system->package_count = 0;
 
     // 清空数据文件
-    FILE* file = fopen(PACKAGE_FILE, "wt");
+    FILE* file = fopen(PACKAGE_FILE, "wb");
     if (file != NULL) {
         int count = 0;
         fwrite(&count, sizeof(int), 1, file);

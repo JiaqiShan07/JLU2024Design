@@ -1,6 +1,8 @@
 #include "all_h_files.h"
+#include "predict_system.h"
 int handleLoginMenuInput(UserSystem* user_system,
-                         PackageSystem* package_system) {
+                         PackageSystem* package_system,
+                         FeedbackSystem* feedback) {
     int choice = getValidatedIntegerInput(0, 2, 1);
     switch (choice) {
         case 1:
@@ -16,7 +18,7 @@ int handleLoginMenuInput(UserSystem* user_system,
                     !handleNotificationMenuInput(user_system, package_system));
 
                 if (user_system->is_login == true) {
-                    handleMainMenuInput(package_system, user_system);
+                    handleMainMenuInput(package_system, user_system, feedback);
                 }
             }
             return 0;
@@ -29,10 +31,11 @@ int handleLoginMenuInput(UserSystem* user_system,
             return 0;
     }
 }
-void handleMainMenuInput(PackageSystem* system, UserSystem* user_system) {
+void handleMainMenuInput(PackageSystem* system,
+                         UserSystem* user_system,
+                         FeedbackSystem* feedback) {
     int choice;
     UserType current_user_type;
-
     UserNode* current = user_system->head;
     // 找到正确的登录用户
     while (current != NULL) {
@@ -54,7 +57,7 @@ void handleMainMenuInput(PackageSystem* system, UserSystem* user_system) {
         // 分不同类型用户限制不同的菜单输入范围保证安全
         if (current_user_type == USER_ADMIN) {
             choice = getValidatedIntegerInput(
-                0, 19, 1);  // 第三个参数为1代表可以例外的输入0
+                0, 20, 1);  // 第三个参数为1代表可以例外的输入0
         } else if (current_user_type == USER_COURIER) {
             choice = getValidatedIntegerInput(
                 0, 13, 1);  // 第三个参数为1代表可以例外的输入0
@@ -64,6 +67,7 @@ void handleMainMenuInput(PackageSystem* system, UserSystem* user_system) {
         }
         switch (choice) {
             case 1:
+                current->packagepre++;
                 pauseAndClearConsole(0);
                 handleAddPackage(system, user_system);
                 pauseAndClearConsole(1);
@@ -76,12 +80,14 @@ void handleMainMenuInput(PackageSystem* system, UserSystem* user_system) {
                 break;
 
             case 3:
+                current->packagepre++;
                 pauseAndClearConsole(0);
                 handlePickupPackage(system, user_system);
                 pauseAndClearConsole(1);
                 break;
 
             case 4:
+                current->packagepre++;
                 pauseAndClearConsole(0);
                 handleRejectPackage(system, user_system);
                 pauseAndClearConsole(1);
@@ -96,6 +102,7 @@ void handleMainMenuInput(PackageSystem* system, UserSystem* user_system) {
                 break;
 
             case 6:
+                current->packagepre++;
                 pauseAndClearConsole(0);
                 handlePickupPackageByOther(system, user_system);
                 pauseAndClearConsole(1);
@@ -103,7 +110,7 @@ void handleMainMenuInput(PackageSystem* system, UserSystem* user_system) {
 
             case 7:
                 pauseAndClearConsole(0);
-                do{
+                do {
                     displayFeedbackMenu();
                 } while (handleFeedbackMenuInput(system, user_system));
                 pauseAndClearConsole(1);
@@ -125,8 +132,7 @@ void handleMainMenuInput(PackageSystem* system, UserSystem* user_system) {
                     Sleep(3000);
                     pauseAndClearConsole(0);
                     return;
-                }
-                else {
+                } else {
                     printf("账户注销失败\n");
                     pauseAndClearConsole(1);
                 }
@@ -204,7 +210,7 @@ void handleMainMenuInput(PackageSystem* system, UserSystem* user_system) {
             case 17:
                 pauseAndClearConsole(0);
                 if (current_user_type == USER_ADMIN) {
-                    displayFeedbackList(system);
+                    displayFeedbackListAndHandleInput(system);
                 } else {
                     printf("无效的选择，请重试\n");
                 }
@@ -219,8 +225,7 @@ void handleMainMenuInput(PackageSystem* system, UserSystem* user_system) {
                         pauseAndClearConsole(0);
                         return;
                     }
-                }
-                else {
+                } else {
                     printf("无效的选择，请重试\n");
                 }
                 pauseAndClearConsole(1);
@@ -234,6 +239,13 @@ void handleMainMenuInput(PackageSystem* system, UserSystem* user_system) {
                 } else {
                     printf("无效的选择，请重试\n");
                 }
+                pauseAndClearConsole(1);
+                break;
+            case 20:
+                pauseAndClearConsole(0);
+                do{
+                    displayPredictMenu();
+                } while (handlepredictSystem(user_system,system,feedback));
                 pauseAndClearConsole(1);
                 break;
             case 0:
@@ -257,12 +269,12 @@ int handleNotificationMenuInput(UserSystem* user_system,
     switch (choice) {
         case 1:
             pauseAndClearConsole(0);
-            do{
+            do {
                 displaysecondNotificationMenu(user_system, package_system);
             } while (!handlesecondNotificationMenuInput(user_system,
                                                         package_system));
 
-                pauseAndClearConsole(1);
+            pauseAndClearConsole(1);
             return 0;
 
         case 2:
@@ -281,42 +293,43 @@ int handleNotificationMenuInput(UserSystem* user_system,
     }
 }
 int handlesecondNotificationMenuInput(UserSystem* user_system,
-    PackageSystem* package_system) {
+                                      PackageSystem* package_system) {
     int choice = getValidatedIntegerInput(0, 5, 1);
     switch (choice) {
-    case 1:
-        pauseAndClearConsole(0);
-        showNotificationPENDING_PICKUPDetails(user_system,package_system);
-        pauseAndClearConsole(1);
-        return 0;
+        case 1:
+            pauseAndClearConsole(0);
+            showNotificationPENDING_PICKUPDetails(user_system, package_system);
+            pauseAndClearConsole(1);
+            return 0;
 
-    case 2:
-        pauseAndClearConsole(0);
-        showNotificationPENDING_DELIVERYDetails(user_system, package_system);
-        pauseAndClearConsole(1);
-        return 0;
-    case 3:
-        pauseAndClearConsole(0);
-        showNotificationABNORMALDetails(user_system, package_system);
-        pauseAndClearConsole(1);
-        return 0;
-    case 4:
-        pauseAndClearConsole(0);
-        showNotificationSTRANDEDDetails(user_system, package_system);
-        pauseAndClearConsole(1);
-        return 0;
-    case 5:
-        pauseAndClearConsole(0);
-        showNotificationREJECTEDDetails(user_system, package_system);
-        pauseAndClearConsole(1);
-        return 0;
-    case 0:
-        return 1;
+        case 2:
+            pauseAndClearConsole(0);
+            showNotificationPENDING_DELIVERYDetails(user_system,
+                                                    package_system);
+            pauseAndClearConsole(1);
+            return 0;
+        case 3:
+            pauseAndClearConsole(0);
+            showNotificationABNORMALDetails(user_system, package_system);
+            pauseAndClearConsole(1);
+            return 0;
+        case 4:
+            pauseAndClearConsole(0);
+            showNotificationSTRANDEDDetails(user_system, package_system);
+            pauseAndClearConsole(1);
+            return 0;
+        case 5:
+            pauseAndClearConsole(0);
+            showNotificationREJECTEDDetails(user_system, package_system);
+            pauseAndClearConsole(1);
+            return 0;
+        case 0:
+            return 1;
 
-    default:
-        printf("无效的选择，请重试\n");
-        pauseAndClearConsole(1);
-        return 0;
+        default:
+            printf("无效的选择，请重试\n");
+            pauseAndClearConsole(1);
+            return 0;
     }
 }
 int handleShelfMenuInput(PackageSystem* system,

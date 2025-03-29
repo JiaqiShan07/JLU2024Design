@@ -1,8 +1,11 @@
 #include "all_h_files.h"
+#include"predict_system.h"
+#include "feedback_assistant.h"
 int main() {
     // 初始化用户系统和包裹系统
     UserSystem* user_system = initUserSystem();
     PackageSystem* package_system = initPackageSystem();
+    FeedbackSystem* feedback_system = initFeedbackSystem();
     if (user_system == NULL || package_system == NULL) {
         printf("系统初始化失败\n");
         return 1;
@@ -19,7 +22,7 @@ int main() {
             printf("无法加载包裹数据，将创建新的数据文件\n");
         }
         displayLoginMenu();
-        should_exit = handleLoginMenuInput(user_system, package_system);
+        should_exit = handleLoginMenuInput(user_system, package_system,feedback_system);
     }
     // 退出前再次保存用户数据到文件
     if (!saveUsersToFile(user_system, USER_FILE)) {
@@ -32,6 +35,7 @@ int main() {
     // 释放系统资源
    //freeUserSystem(user_system);
     //freePackageSystem(package_system);
+    //freeFeedbackSystem(feedback_system);
     PackageNode* curr0 = package_system->head;
     while (curr0 != NULL) {
         PackageNode* tmp = curr0;
@@ -44,6 +48,13 @@ int main() {
         curr1 = curr1->next;
         free(tmp);
     }
+    FeedbackNode* current_feedback = feedback_system->head;
+    while (current_feedback != NULL) {
+        FeedbackNode* temp = current_feedback;
+        current_feedback = current_feedback->next;
+        free(temp);
+    }
+
     printf("\t-----------------\n");
     printf("\t感谢使用，再见！\n");
     printf("\t-----------------\n");

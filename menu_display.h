@@ -21,4 +21,6 @@ void displayFeedbackMenu();
 // 展示二级通知菜单
 void displaysecondNotificationMenu(UserSystem* user_system,
                                    PackageSystem* package_system);
+// 展示预测系统的菜单界面，包括预测包裹存储情况和查看预测结果等功能
+void displayPredictMenu();
 #endif

@@ -1,7 +1,7 @@
 #ifndef USER_SYSTEM_H
 #define USER_SYSTEM_H
 #include "all_h_files.h"
-#define MAX_USERS 100                   // 系统支持的最大用户数
+#define MAX_USERS 10                    // 系统支持的最大用户数
 #define MAX_USERNAME_LENGTH 50          // 用户名的最大长度
 #define MIN_USERNAME_PASSWORD_LENGTH 3  // 用户名/密码的最小长度
 #define MAX_PASSWORD_LENGTH 50          // 密码的最大长度
@@ -17,7 +17,8 @@ typedef struct UserNode {
     time_t VIPtime;                                  // 用户成为VIP时间
     time_t looktime[1000];                          // 管理员查看交易流水记录
     int adminchoice[1000];                          // 记录管理员每次的选项
-    int searchcount;                                   // 辅助变量
+    int searchcount;                                // 辅助变量
+    int packagepre;                                 // 统计每名用户进行的包裹操作数
 } UserNode;
 typedef struct {
     UserNode* head;                              // 用户链表的头指针

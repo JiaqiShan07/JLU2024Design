@@ -27,41 +27,37 @@ static const KeywordResponse AUTO_RESPONSES[] = {
      "我们的快递服务时间为每天8:00-22:00，请在此时间段内进行取件和寄件操作。"},
     {"丢失",
      "如果您的快递出现丢失情况，请立即联系管理员或提交反馈，我们会优先处理。"},
-    {"VIP",
-     "如需成为VIP用户，请进入主菜单寻找选项。"},
-    {"vip",
-     "如需成为VIP用户，请进入主菜单寻找选项。"}
-};
+    {"VIP", "如需成为VIP用户，请进入主菜单寻找选项。"},
+    {"vip", "如需成为VIP用户，请进入主菜单寻找选项。"}};
 
 // 初始化反馈系统
-static FeedbackSystem* initFeedbackSystem() {
+FeedbackSystem* initFeedbackSystem() {
     FeedbackSystem* system = (FeedbackSystem*)malloc(sizeof(FeedbackSystem));
     if (system == NULL)
         return NULL;
-
     system->head = NULL;
     system->next_feedback_id = 1000;
+    system->feedback_count = 0;
     return system;
 }
 // 保存反馈到文件
 static int saveFeedbackToFile(FeedbackSystem* system) {
     if (system == NULL)
         return 0;
-
     FILE* file = fopen(FEEDBACK_FILE, "wb");
     if (file == NULL)
         return 0;
-
+    // 写入反馈数量
+    fwrite(&system->feedback_count, sizeof(int), 1, file);
+    // 写入所有反馈节点
     FeedbackNode* current = system->head;
     while (current != NULL) {
         fwrite(current, sizeof(FeedbackNode), 1, file);
         current = current->next;
     }
-
     fclose(file);
     return 1;
 }
-
 // 从文件加载反馈
 FeedbackSystem* loadFeedbackFromFile() {
     FeedbackSystem* system = initFeedbackSystem();
@@ -72,6 +68,15 @@ FeedbackSystem* loadFeedbackFromFile() {
     if (file == NULL)
         return system;
 
+    // 先读取反馈数量
+    int feedback_count;
+    if (fread(&feedback_count, sizeof(int), 1, file) != 1) {
+        fclose(file);
+        return system;
+    }
+    system->feedback_count = feedback_count;
+
+    // 读取所有反馈节点
     FeedbackNode temp;
     while (fread(&temp, sizeof(FeedbackNode), 1, file) == 1) {
         FeedbackNode* new_node = (FeedbackNode*)malloc(sizeof(FeedbackNode));
@@ -118,91 +123,81 @@ int handleFeedbackMenuInput(PackageSystem* package_system,
         printf("反馈系统初始化失败\n");
         return 0;
     }
-    int choice=getValidatedIntegerInput(0, 2, 1);
-        switch (choice) {
-            case 1: {
-                printf("\n请输入反馈内容（最多%d字符）:\n",
-                       MAX_FEEDBACK_LENGTH - 1);
-                char feedback_content[MAX_FEEDBACK_LENGTH];
-                getValidatedStringInput(feedback_content, MAX_FEEDBACK_LENGTH);
+    int choice = getValidatedIntegerInput(0, 2, 1);
+    switch (choice) {
+        case 1: {
+            printf("\n请输入反馈内容（最多%d字符）:\n",
+                   MAX_FEEDBACK_LENGTH - 1);
+            char feedback_content[MAX_FEEDBACK_LENGTH];
+            getValidatedStringInput(feedback_content, MAX_FEEDBACK_LENGTH);
 
-                FeedbackNode* new_feedback =
-                    (FeedbackNode*)malloc(sizeof(FeedbackNode));
-                if (new_feedback == NULL) {
-                    printf("内存分配失败\n");
-                    break;
-                }
-
-                new_feedback->feedback_id = feedback_system->next_feedback_id++;
-                strncpy(new_feedback->username, username,
-                        sizeof(new_feedback->username));
-                strncpy(new_feedback->content, feedback_content,
-                        sizeof(new_feedback->content));
-                new_feedback->status = FEEDBACK_PENDING;
-                new_feedback->submit_time = time(NULL);
-                new_feedback->next = feedback_system->head;
-                feedback_system->head = new_feedback;
-
-                if (saveFeedbackToFile(feedback_system)) {
-                    printf("----------------------------------------\n");
-                    printf("反馈提交成功！反馈ID：%04d\n",
-                           new_feedback->feedback_id);
-                } else {
-                    printf("反馈保存失败\n");
-                }
-                pauseAndClearConsole(1);
+            FeedbackNode* new_feedback =
+                (FeedbackNode*)malloc(sizeof(FeedbackNode));
+            if (new_feedback == NULL) {
+                printf("内存分配失败\n");
                 break;
             }
 
-            case 2: {
-                printf("\n您的反馈记录：\n");
+            new_feedback->feedback_id = feedback_system->next_feedback_id++;
+            strncpy(new_feedback->username, username,
+                    sizeof(new_feedback->username));
+            strncpy(new_feedback->content, feedback_content,
+                    sizeof(new_feedback->content));
+            new_feedback->status = FEEDBACK_PENDING;
+            new_feedback->submit_time = time(NULL);
+            new_feedback->next = feedback_system->head;
+            feedback_system->head = new_feedback;
+            feedback_system->feedback_count++;
+            if (saveFeedbackToFile(feedback_system)) {
                 printf("----------------------------------------\n");
-                int found = 0;
-                FeedbackNode* current = feedback_system->head;
-
-                while (current != NULL) {
-                    if (strcmp(current->username, username) == 0) {
-                        found = 1;
-                        printf("反馈ID: %04d\n", current->feedback_id);
-                        printf("内容: %s\n", current->content);
-                        outputFeedbackStatus(current);
-                        printf("提交时间: %s", ctime(&current->submit_time));
-                        printf("----------------------------------------\n");
-                    }
-                    current = current->next;
-                }
-
-                if (!found) {
+                printf("反馈提交成功！反馈ID：%04d\n",
+                       new_feedback->feedback_id);
+            } else {
+                printf("反馈保存失败\n");
+            }
+            pauseAndClearConsole(1);
+            break;
+        }
+        case 2: {
+            printf("\n您的反馈记录：\n");
+            printf("----------------------------------------\n");
+            int found = 0;
+            FeedbackNode* current = feedback_system->head;
+            while (current != NULL) {
+                if (strcmp(current->username, username) == 0) {
+                    found = 1;
+                    printf("反馈ID: %04d\n", current->feedback_id);
+                    printf("内容: %s\n", current->content);
+                    outputFeedbackStatus(current);
+                    printf("提交时间: %s", ctime(&current->submit_time));
                     printf("----------------------------------------\n");
-                    printf("暂无反馈记录\n");
-                    printf("----------------------------------------\n");
                 }
-                pauseAndClearConsole(1);
-                break;
+                current = current->next;
             }
 
-            case 0:
+            if (!found) {
                 printf("----------------------------------------\n");
-                printf("返回主菜单\n");
+                printf("暂无反馈记录\n");
                 printf("----------------------------------------\n");
+            }
+            pauseAndClearConsole(1);
+            break;
+        }
+
+        case 0:
+            printf("----------------------------------------\n");
+            printf("返回主菜单\n");
+            printf("----------------------------------------\n");
 
             return 0;
-                break;
+            break;
 
-            default:
-                printf("----------------------------------------\n");
-                printf("无效的选择，请重试\n");
-                printf("----------------------------------------\n");
-                break;
-        }
-    // 清理反馈系统
-    FeedbackNode* current_feedback = feedback_system->head;
-    while (current_feedback != NULL) {
-        FeedbackNode* temp = current_feedback;
-        current_feedback = current_feedback->next;
-        free(temp);
+        default:
+            printf("----------------------------------------\n");
+            printf("无效的选择，请重试\n");
+            printf("----------------------------------------\n");
+            break;
     }
-    free(feedback_system);
     return 1;
 }
 
@@ -271,14 +266,13 @@ void handleContactSmartAssistant(PackageSystem* package_system,
     }
 }
 // 集成了展示反馈菜单和处理反馈菜单的功能
-void displayFeedbackList(PackageSystem* system) {
+void displayFeedbackListAndHandleInput(PackageSystem* system) {
     // 加载反馈系统
     FeedbackSystem* feedback_system = loadFeedbackFromFile();
     if (feedback_system == NULL) {
         printf("反馈系统初始化失败\n");
         return;
     }
-
     while (1) {
         printf("\n----------------------------------------\n");
         printf("反馈信息列表\n");
@@ -324,9 +318,11 @@ void displayFeedbackList(PackageSystem* system) {
                 outputFeedbackStatus(current);
                 printf("反馈内容:\n%s\n", current->content);
                 printf("----------------------------------------\n");
+                printf("---------------可选的操作-----------------\n");
                 printf(
-                    "\n1. 标记为待处理\n2. 标记为处理中\n3. 标记为已解决\n4. "
+                    "1. 标记为待处理\n2. 标记为处理中\n3. 标记为已解决\n4. "
                     "标记为已关闭\n0. 返回上一级\n请选择操作: ");
+                printf("----------------------------------------\n");
                 int status_choice = getValidatedIntegerInput(0, 4, 1);
 
                 if (status_choice > 0) {
@@ -359,18 +355,8 @@ void displayFeedbackList(PackageSystem* system) {
         if (!found) {
             printf("未找到ID为%d的反馈信息\n", feedback_id);
         }
-
         pauseAndClearConsole(0);
     }
-
-    // 清理反馈系统
-    FeedbackNode* current = feedback_system->head;
-    while (current != NULL) {
-        FeedbackNode* temp = current;
-        current = current->next;
-        free(temp);
-    }
-    free(feedback_system);
 }
 void clearAllFeedback(FeedbackSystem* system) {
     if (system == NULL) {

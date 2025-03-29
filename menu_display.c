@@ -67,6 +67,7 @@ void displayMainMenu(UserSystem* user_system) {
             printf("17. 处理用户反馈信息\n");
             printf("18. 清除系统数据\n");
             printf("19. 查看系统流水日志\n");
+            printf("20. 预测快递驿站第二天发展趋势\n");
             printf("----------------------------------------\n");
         }
     }
@@ -142,5 +143,18 @@ void displayFeedbackMenu() {
     printf("2. 查看我的反馈\n");
     printf("0. 返回主菜单\n");
     printf("----------------------------------------\n");
-    printf("请选择操作: ");
+    printf("请选择操作:(0-2) ");
+}
+void displayPredictMenu() {
+    printf("正在根据往期数据为您预测......\n");
+    printf("-------------超级无敌预测系统-------------\n");
+    printf("下面根据第二天天气情况对包裹滞留数目的预测\n");
+    printf("处理选项:\n");
+    printf("1. 晴天\n");
+    printf("2. 雨天\n");
+    printf("3. 刮风\n");
+    printf("4. 雪天\n");
+    printf("0. 返回主菜单\n");
+    printf("----------------------------------------\n");
+    printf("请确定第二天的天气状况：(1-4)\n");
 }

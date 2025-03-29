@@ -4,11 +4,14 @@
 #include "package_system.h"
 #include "shelf_management.h"
 #include "user_system.h"
+#include"feedback_assistant.h"
+#include"predict_system.h"
 // 处理登录菜单的用户输入，包括登录和注册选项的选择
 int handleLoginMenuInput(UserSystem* user_system,
-                         PackageSystem* package_system);
+    PackageSystem* package_system, FeedbackSystem* feedback);
 // 处理主菜单的用户输入，根据用户类型提供不同的功能选项
-void handleMainMenuInput(PackageSystem* system, UserSystem* user_system);
+void handleMainMenuInput(PackageSystem* system, UserSystem* user_system,
+    FeedbackSystem* feedback);
 // 处理通知菜单的用户输入，包括查看和处理包裹状态通知
 int handleNotificationMenuInput(UserSystem* user_system,
                                 PackageSystem* package_system);

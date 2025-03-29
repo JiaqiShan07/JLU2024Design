@@ -1,6 +1,6 @@
 #include "all_h_files.h"
-#include"predict_system.h"
 #include "feedback_assistant.h"
+#include "predict_system.h"
 int main() {
     // 初始化用户系统和包裹系统
     UserSystem* user_system = initUserSystem();
@@ -22,7 +22,8 @@ int main() {
             printf("无法加载包裹数据，将创建新的数据文件\n");
         }
         displayLoginMenu();
-        should_exit = handleLoginMenuInput(user_system, package_system,feedback_system);
+        should_exit =
+            handleLoginMenuInput(user_system, package_system, feedback_system);
     }
     // 退出前再次保存用户数据到文件
     if (!saveUsersToFile(user_system, USER_FILE)) {
@@ -33,18 +34,19 @@ int main() {
         printf("保存包裹数据失败\n");
     }
     // 释放系统资源
-   //freeUserSystem(user_system);
-    //freePackageSystem(package_system);
-    //freeFeedbackSystem(feedback_system);
+    // 全局链表最后释放内存
+    // freeUserSystem(user_system);
+    // freePackageSystem(package_system);
+    // freeFeedbackSystem(feedback_system);
     PackageNode* curr0 = package_system->head;
     while (curr0 != NULL) {
         PackageNode* tmp = curr0;
         curr0 = curr0->next;
         free(tmp);
     }
-    UserNode*curr1 = user_system->head;
-    while (curr1!= NULL) {
-       UserNode* tmp = curr1;
+    UserNode* curr1 = user_system->head;
+    while (curr1 != NULL) {
+        UserNode* tmp = curr1;
         curr1 = curr1->next;
         free(tmp);
     }

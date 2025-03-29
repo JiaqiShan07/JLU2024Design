@@ -298,29 +298,33 @@ int handlesecondNotificationMenuInput(UserSystem* user_system,
     switch (choice) {
         case 1:
             pauseAndClearConsole(0);
-            showNotificationPENDING_PICKUPDetails(user_system, package_system);
+            showDifferentTypePackageDetails(user_system, package_system,
+                                            PENDING_PICKUP);
             pauseAndClearConsole(1);
             return 0;
 
         case 2:
             pauseAndClearConsole(0);
-            showNotificationPENDING_DELIVERYDetails(user_system,
-                                                    package_system);
+            showDifferentTypePackageDetails(user_system, package_system,
+                                            PENDING_DELIVERY);
             pauseAndClearConsole(1);
             return 0;
         case 3:
             pauseAndClearConsole(0);
-            showNotificationABNORMALDetails(user_system, package_system);
+            showDifferentTypePackageDetails(user_system, package_system,
+                                            ABNORMAL);
             pauseAndClearConsole(1);
             return 0;
         case 4:
             pauseAndClearConsole(0);
-            showNotificationSTRANDEDDetails(user_system, package_system);
+            showDifferentTypePackageDetails(user_system, package_system,
+                                            STRANDED);
             pauseAndClearConsole(1);
             return 0;
         case 5:
             pauseAndClearConsole(0);
-            showNotificationREJECTEDDetails(user_system, package_system);
+            showDifferentTypePackageDetails(user_system, package_system,
+                                            REJECTED);
             pauseAndClearConsole(1);
             return 0;
         case 0:

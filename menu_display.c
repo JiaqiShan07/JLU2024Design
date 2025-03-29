@@ -88,11 +88,18 @@ void displayNotificationMenu(UserSystem* user_system,
 void displaysecondNotificationMenu(UserSystem* user_system,
                                    PackageSystem* package_system) {
     printf("\n-------------分类通知详情--------------\n");
-    printf("1. 取件通知\n");
-    printf("2. 待寄出通知\n");
-    printf("3. 异常通知\n");
-    printf("4. 滞留通知\n");
-    printf("5. 拒收通知\n");
+    printf("1. 取件通知  (%d条新通知)\n",
+           getDifferentTypePackageCount(user_system, package_system,
+                                        PENDING_PICKUP));
+    printf("2. 待寄出通知(%d条新通知)\n",
+           getDifferentTypePackageCount(user_system, package_system,
+                                        PENDING_DELIVERY));
+    printf("3. 异常通知  (%d条新通知)\n",
+           getDifferentTypePackageCount(user_system, package_system, ABNORMAL));
+    printf("4. 滞留通知  (%d条新通知)\n",
+           getDifferentTypePackageCount(user_system, package_system, STRANDED));
+    printf("5. 拒收通知  (%d条新通知)\n",
+           getDifferentTypePackageCount(user_system, package_system, REJECTED));
     printf("0. 退出通知详情\n");
     printf("----------------------------------------\n");
     printf("请选择操作: ");
@@ -137,7 +144,7 @@ void displayAdminLogMenu() {
     printf("请选择 (0-3): ");
 }
 void displayFeedbackMenu() {
-    printf("\n----------------------------------------\n");
+    printf("\n----------------反馈系统---------------\n");
     printf("反馈系统\n");
     printf("1. 提交新反馈\n");
     printf("2. 查看我的反馈\n");

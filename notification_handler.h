@@ -4,15 +4,10 @@
 // 显示当前用户未读通知的数量，包括包裹状态变更等通知
 void showNotificationCount(UserSystem* user_system,
                            PackageSystem* package_system);
-// 展示各类包裹的通知详情
-void showNotificationPENDING_PICKUPDetails(UserSystem* user_system,
-                                           PackageSystem* package_system);
-void showNotificationPENDING_DELIVERYDetails(UserSystem* user_system,
-                                             PackageSystem* package_system);
-void showNotificationABNORMALDetails(UserSystem* user_system,
-                                     PackageSystem* package_system);
-void showNotificationSTRANDEDDetails(UserSystem* user_system,
-                                     PackageSystem* package_system);
-void showNotificationREJECTEDDetails(UserSystem* user_system,
-                                     PackageSystem* package_system);
+//获取不同包裹的通知数量
+int getDifferentTypePackageCount(UserSystem* user_system,
+                           PackageSystem* package_system,PackageStatus type);
+//展示不同包裹类型的细节
+void showDifferentTypePackageDetails(UserSystem* user_system,
+                           PackageSystem* package_system,PackageStatus type);
 #endif  // NOTIFICATION_HANDLER_H

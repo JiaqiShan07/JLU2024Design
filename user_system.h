@@ -69,12 +69,12 @@ int VIPwater(UserSystem* user_system);
 int packagewater(UserSystem* user_system, PackageSystem* system);
 // 处理管理员浏览流水记录的交互
 void handleAdminLookWaterLog(UserSystem* user_system, PackageSystem* system);
-//
+// 记录用户寄件流水信息
 int packagewater(UserSystem* user_system, PackageSystem* system);
-//
+// 记录用户VIP充值流水信息
 int VIPwater(UserSystem* user_system);
-//
+// 处理用户升级VIP的交互界面
 void handleUpgradeVIP(UserSystem* user_system);
-//
+// 执行用户升级VIP的核心功能
 int upgradeVIP(UserSystem* user_system);
 #endif

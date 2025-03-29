@@ -45,7 +45,8 @@ int loadPackagesFromFile(PackageSystem* system, const char* filename) {
             if (time_diff > STRANDED_TIME) {
                 new_node->status = STRANDED;
                 new_node->stranded_time =
-                    (int)(time_diff - STRANDED_TIME) / ONE_DAY;
+                    (int)ceil((time_diff - STRANDED_TIME) / ONE_DAY);
+                    //利用ceil向上取整
                 // 滞留时间要减去滞留的基准时间
             }
         }

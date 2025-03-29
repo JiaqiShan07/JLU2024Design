@@ -1,5 +1,6 @@
 #pragma once
 #include <ctype.h>
+#include <math.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -15,11 +16,11 @@
 // 输入处理相关头文件
 #include "menu_input.h"
 // UI处理相关头文件
-#include"menu_display.h"
+#include "menu_display.h"
 // 功能处理相关头文件
-#include "other_functions.h"
 #include "feedback_assistant.h"
 #include "friend_management.h"
+#include "other_functions.h"
 // 核心功能模块头文件
 #include "notification_handler.h"
 #include "package_system.h"

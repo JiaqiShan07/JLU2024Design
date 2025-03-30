@@ -1,5 +1,7 @@
 #include "all_h_files.h"
 #define MAX_CHECK_SIZE 100000
+#include <locale.h>
+#include <wchar.h>
 int getValidatedIntegerInput(int min, int max, int zero_allowed) {
     int value;
     char input[MAX_CHECK_SIZE];
@@ -110,6 +112,7 @@ void getValidatedStringInput(char* buffer, size_t max_length) {
 void getValidatedNumAndLetterInput(char* buffer,
                                    size_t min_length,
                                    size_t max_length) {
+    setlocale(LC_ALL, "chs");  // 设置区域以支持GBK编码
     int valid;
     do {
         valid = 1;
@@ -125,7 +128,8 @@ void getValidatedNumAndLetterInput(char* buffer,
             continue;
         }
         for (size_t i = 0; i < length; i++) {
-            if (!isalnum(buffer[i])) {
+            // 检查字符是否为字母或数字，支持多字节字符
+            if (!isalnum((unsigned char)buffer[i]) || (unsigned char)buffer[i] >= 0x80) {
                 printf("输入包含非法字符(仅支持字母和数字），请重新输入:");
                 valid = 0;
                 break;

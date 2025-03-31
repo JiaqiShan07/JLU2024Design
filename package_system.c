@@ -770,14 +770,14 @@ void handleDeliverPackage(PackageSystem* system) {
     int found_pending = 0;
 
     printf("\n待寄出/被拒绝的包裹列表:\n");
-    printf("包裹ID\t描述\t\t收件人\t\t配送费用\n");
+    printf("包裹ID\t描述\t\t\t收件人\t\t配送费用\n");
 
     PackageNode* current = system->head;
     while (current != NULL) {
         // 检查是否处于待配送状态
         if (current->status == PENDING_DELIVERY ||
             current->status == REJECTED) {  // 待配送状态
-            printf("%d\t%s\t\t%s\t\t%.2f\n", current->package_id,
+            printf("%d\t%s\t\t\t%s\t\t%.2f\n", current->package_id,
                    current->description, current->recipient,
                    current->delivery_fee);
             found_pending = 1;

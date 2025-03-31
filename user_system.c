@@ -153,7 +153,7 @@ char* registerUser(UserSystem* system,
     new_node->next = NULL;
     new_node->looktime[0] = -9999;
     new_node->VIPtime = time(NULL);
-    new_node->adminchoice[0] = -9999;
+    new_node->adminchoice[0] = 0;
     new_node->packagepre = 0;
     // 将新节点添加到链表末尾
     if (system->head == NULL) {
@@ -839,7 +839,9 @@ void handleAdminLookWaterLog(UserSystem* user_system, PackageSystem* system){
     while (current!= NULL) {
         int temp = 0;
         if (current->type == USER_ADMIN) {
-            while (current->adminchoice[temp] != 0) {
+            while (current->adminchoice[temp] != 0 &&
+                   (current->adminchoice[temp] == 1 ||
+                    current->adminchoice[temp] == -1)) {
                 if (current->adminchoice[temp] == 1) {
                     struct tm* timeinfo;
                     char buffer[80];

@@ -46,9 +46,13 @@ int loadPackagesFromFile(PackageSystem* system, const char* filename) {
                 new_node->status = STRANDED;
                 new_node->stranded_time =
                     (int)ceil((time_diff - STRANDED_TIME) / ONE_DAY);
-                    //利用ceil向上取整
+                // 利用ceil向上取整
                 // 滞留时间要减去滞留的基准时间
             }
+        } else if (new_node->status == REJECTED) {
+            // 如果是拒收状态，将收件人设为原发件人，地址设为原发件地
+            strcpy(new_node->recipient, "原发件人");
+            strcpy(new_node->recipientAdress, "原发件地");
         }
         // 将新节点添加到链表末尾
         if (system->head == NULL) {
@@ -296,8 +300,9 @@ int pickupPackage(PackageSystem* system, int package_id) {
                 if (confirm == 'y' || confirm == 'Y') {
                     current->status = PICKED_UP;
                     current->pickup_time = time(NULL);  // 记录取件时间
-                    current->pay_stranded_fee_time = time(NULL);//记录付款成功的时间
-                    current->stranded_fee = stranded_fee;//记录实际缴纳费用
+                    current->pay_stranded_fee_time =
+                        time(NULL);                        // 记录付款成功的时间
+                    current->stranded_fee = stranded_fee;  // 记录实际缴纳费用
                     strcpy(current->pickup_name,
                            current->username);  // 记录取件人姓名
                     printf("滞留包裹取件成功\n");
@@ -770,14 +775,14 @@ void handleDeliverPackage(PackageSystem* system) {
     int found_pending = 0;
 
     printf("\n待寄出/被拒绝的包裹列表:\n");
-    printf("包裹ID\t描述\t\t\t收件人\t\t配送费用\n");
+    printf("包裹ID\t描述\t\t\t收件人\t\t\t配送费用\n");
 
     PackageNode* current = system->head;
     while (current != NULL) {
         // 检查是否处于待配送状态
         if (current->status == PENDING_DELIVERY ||
             current->status == REJECTED) {  // 待配送状态
-            printf("%d\t%s\t\t\t%s\t\t%.2f\n", current->package_id,
+            printf("%d\t%s\t\t\t%s\t\t\t%.2f\n", current->package_id,
                    current->description, current->recipient,
                    current->delivery_fee);
             found_pending = 1;
@@ -790,14 +795,17 @@ void handleDeliverPackage(PackageSystem* system) {
         return;
     }
 
-    printf("\n请输入要寄出的包裹ID: ");
-    package_id = getValidatedIntegerInput(1000, 9999, 0);
-
+    printf("\n请输入要寄出的包裹ID(输入0退出): ");
+    package_id = getValidatedIntegerInput(1000, 9999, 1);
+    if (package_id == 0) {
+        return;
+    }
     current = system->head;
     while (current != NULL) {
         if (current->package_id == package_id) {
             // 检查包裹是否处于待配送状态并更新为已配送
-            if (current->status == PENDING_DELIVERY) {
+            if (current->status == PENDING_DELIVERY ||
+                current->status == REJECTED) {
                 current->status = DELIVERED;      // 更新为已配送状态
                 current->sent_time = time(NULL);  // 记录配送时间
                 printf("包裹已成功寄出\n");
@@ -1014,6 +1022,8 @@ void handleRejectPackage(PackageSystem* system, UserSystem* user_system) {
             if (package->status == PENDING_PICKUP ||
                 package->status == ABNORMAL) {
                 package->status = REJECTED;
+                strcpy(package->recipient, "原发件人");
+                strcpy(package->recipientAdress, "原发件地");
                 if (!savePackagesToFile(system, PACKAGE_FILE)) {
                     printf("保存包裹数据失败\n");
                 } else {
@@ -1279,9 +1289,14 @@ void displayPackageDetails(PackageNode* current) {
     printf("描述: %s\n", current->description);
 
     printf("取件码: %s\n", current->pickup_code);
-    printf("位置: %s, %d层\n", switchShelfNumToString(current->shelf_number),
-           current->layer_number);
-    if (current->status == PENDING_DELIVERY) {
+    if (current->status == DELIVERED) {
+        printf("位置: 已不在货架\n");
+    } else {
+        printf("位置: %s, %d层\n",
+               switchShelfNumToString(current->shelf_number),
+               current->layer_number);
+    }
+    if (current->status == PENDING_DELIVERY || current->status == DELIVERED) {
         printf("收件人: %s\n", current->recipient);
         printf("收件人地址: %s\n", current->recipientAdress);
         printf("配送费用: %.2f\n", current->delivery_fee);

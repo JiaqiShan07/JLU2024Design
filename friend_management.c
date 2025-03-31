@@ -171,10 +171,10 @@ void addFriends(UserSystem* user_system,
     }
 }
 
-void deleteFriend(UserSystem* user_system, const char* friend_username) {
+int deleteFriend(UserSystem* user_system, const char* friend_username) {
     if (user_system == NULL || user_system->is_login == false) {
         printf("请先登录\n");
-        return;
+        return 0;
     }
 
     // 查找当前用户节点
@@ -189,7 +189,7 @@ void deleteFriend(UserSystem* user_system, const char* friend_username) {
 
     if (current_user == NULL) {
         printf("获取用户信息失败\n");
-        return;
+        return 0;
     }
 
     // 在当前用户的好友列表中查找并删除目标好友
@@ -210,7 +210,7 @@ void deleteFriend(UserSystem* user_system, const char* friend_username) {
 
     if (!found) {
         printf("%s 不是您的好友\n", friend_username);
-        return;
+        return 0;
     }
 
     // 查找目标好友节点
@@ -224,7 +224,7 @@ void deleteFriend(UserSystem* user_system, const char* friend_username) {
 
     if (friend_node == NULL) {
         printf("目标用户不存在\n");
-        return;
+        return 0;
     }
 
     // 在目标好友的好友列表中删除当前用户
@@ -241,6 +241,7 @@ void deleteFriend(UserSystem* user_system, const char* friend_username) {
             break;
         }
     }
+    return 1;
 }
 
 void handleRemoveFriends(UserSystem* user_system) {
@@ -283,13 +284,18 @@ void handleRemoveFriends(UserSystem* user_system) {
     char confirm = getValidatedCharInput("YNyn");
 
     if (confirm == 'y' || confirm == 'Y') {
-        deleteFriend(user_system, friend_username);
-        // 保存更新到文件
-        if (saveUsersToFile(user_system, USER_FILE)) {
-            printf("已成功删除好友 %s\n", friend_username);
-        } else {
-            printf("删除好友成功，但保存到文件失败\n");
+        if (deleteFriend(user_system, friend_username)) {
+            if (saveUsersToFile(user_system, USER_FILE)) {
+                printf("已成功删除好友 %s\n", friend_username);
+            }
+            else {
+                printf("删除好友成功，但保存到文件失败\n");
+            }
         }
+        else {
+			printf("删除好友失败\n");
+        }
+        
     } else {
         printf("操作已取消\n");
     }

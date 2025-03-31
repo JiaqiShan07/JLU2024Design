@@ -16,4 +16,4 @@ void handleViewFriends(UserSystem* user_system);
 // 显示当前用户的邀请码，用于添加好友时的验证
 void handleViewInviteCode(UserSystem* user_system);
 // 从用户的好友列表中删除指定的好友
-void deleteFriend(UserSystem* user_system, const char* friend_username);
+int deleteFriend(UserSystem* user_system, const char* friend_username);

@@ -562,7 +562,7 @@ void handleAddPackage(PackageSystem* system, UserSystem* user_system) {
     }
 
     printf("请输入包裹描述: ");
-    getValidatedStringInput(description, MAX_NAME_LENGTH);
+    getValidatedStringInput(description, MAX_DESCRIPTION);
 
     printf("请选择包裹大小 (0:小件, 1:中件, 2:大件): ");
     size_choice = getValidatedIntegerInput(0, 2, 1);

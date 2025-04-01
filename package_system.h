@@ -2,6 +2,7 @@
 #include "all_h_files.h"
 #include "user_system.h"
 #define STRANDED_TIME (3 * ONE_DAY) // 滞留时间为3天
+#define MAX_DESCRIPTION 10
 #define ONE_DAY 86400         // 1天 = 24 * 60 * 60 = 86400秒
 // 从文件中加载包裹信息到系统
 int loadPackagesFromFile(PackageSystem* system, const char* filename);

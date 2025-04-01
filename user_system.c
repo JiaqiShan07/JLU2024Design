@@ -680,8 +680,7 @@ void handleUpgradeVIP(UserSystem* user_system) {
     // 显示 VIP 权益
     printf("----------------------------------------\n");
     printf("成为 VIP 会员，您可以享受以下权益：\n");
-    printf("1. 享受6折寄件优惠。\n");
-    printf("2. 预付费结算。\n");
+    printf("\t享受6折寄件优惠。\n");
     printf("----------------------------------------\n");
     // 询问用户是否愿意成为 VIP
     printf("您是否愿意成为我们的 VIP 会员，并支付200元年费？(Y/N): ");

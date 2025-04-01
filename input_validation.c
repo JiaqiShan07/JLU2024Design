@@ -115,7 +115,7 @@ void getValidatedStringInput(char* buffer, size_t max_length) {
         // 如果输入超出最大长度，提示用户并继续循环
         if (input_too_long) {
             printf("输入超出最大长度限制（%zu个字符），请重新输入：",
-                   max_length - 1);
+                   max_length - 2);
             input_too_long = 0;  // 重置标志
         }
     }

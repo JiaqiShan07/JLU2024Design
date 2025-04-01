@@ -1229,8 +1229,7 @@ void pickupPackageByOther(PackageSystem* system,
     while (package != NULL) {
         if (package->package_id == package_id) {
             // 检查包裹状态
-            if (package->status != PENDING_PICKUP &&
-                package->status != STRANDED) {
+            if (package->status != PENDING_PICKUP) {
                 printf("----------------------------------------\n");
                 printf("该包裹当前状态无法代取\n");
                 printf("当前状态：%s\n",

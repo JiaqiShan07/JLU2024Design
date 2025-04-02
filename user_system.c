@@ -125,6 +125,13 @@ char* registerUser(UserSystem* system,
     if (system == NULL || username == NULL || password == NULL) {
         return NULL;
     }
+
+    // 检查当前用户数量是否已达到最大值
+    if (system->user_count >= MAX_USERS) {
+        printf("用户数量已达到最大值，无法注册新用户！\n");
+        return NULL;
+    }
+
     // 检查用户名是否已存在，并将指针指向链表末尾
     UserNode* current = system->head;
     while (current != NULL) {
@@ -134,6 +141,7 @@ char* registerUser(UserSystem* system,
         }
         current = current->next;
     }
+
     // 创建新用户节点
     UserNode* new_node = (UserNode*)malloc(sizeof(UserNode));
     if (new_node == NULL) {

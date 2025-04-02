@@ -1,7 +1,7 @@
 #ifndef USER_SYSTEM_H
 #define USER_SYSTEM_H
 #include "all_h_files.h"
-#define MAX_USERS 10                    // 系统支持的最大用户数
+#define MAX_USERS 100                    // 系统支持的最大用户数
 #define MAX_USERNAME_LENGTH 50          // 用户名的最大长度
 #define MIN_USERNAME_PASSWORD_LENGTH 3  // 用户名/密码的最小长度
 #define MAX_PASSWORD_LENGTH 50          // 密码的最大长度
